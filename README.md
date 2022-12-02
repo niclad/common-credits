@@ -1,22 +1,14 @@
-# create-svelte
+# Common Credits
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+A webapp to list the common cast and crew of multiple TV or movie productions.
 
-## Creating a project
+## Example
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+Choosing multiple titles, such as [*Step Brothers* (2008)](https://www.themoviedb.org/movie/12133-step-brothers?language=en-US) and [*Talladega Nights: The Ballad of Ricky Bobby* (2006)](https://www.themoviedb.org/movie/9718-talladega-nights-the-ballad-of-ricky-bobby?language=en-US) will show which actors and production crew worked on both films.
 
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Install dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
 ```bash
 npm run dev
@@ -27,7 +19,7 @@ npm run dev -- --open
 
 ## Building
 
-To create a production version of your app:
+To create a production version of the app:
 
 ```bash
 npm run build
