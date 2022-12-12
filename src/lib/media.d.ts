@@ -43,6 +43,12 @@ interface Credits {
 	crew: MediaCrew[];
 }
 
+interface CompositeMedia {
+	titles: BasicMedia[];
+	cast: MediaCast[];
+	crew: MediaCrew[];
+}
+
 // Only two media types that exist in TMDb
 enum MediaType {
 	Movie,
@@ -57,9 +63,10 @@ interface QueryParams {
 
 export { 
 	BasicMedia,
+	CompositeMedia,
+	Credits,
 	MediaCast,
 	MediaCrew,
-	Credits,
 	MediaType,
 	QueryParams,
 }
