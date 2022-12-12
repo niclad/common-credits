@@ -4,16 +4,16 @@
 	export async function onClick() {
 		console.log(';)');
 		const queryParams: string = new URLSearchParams([
-			['id', '585511'], 
-			// ['id', '1234'], 
+			['id', '9718'], 
+			['id', '12133'], 
 			// ['id', '5678'],
 			['type', '0'],
-			// ['type', '0'],
+			['type', '0'],
 			// ['type', '0'],
 		]).toString();
 		const url: string = '/api/tmdb' + '?' + queryParams;
 		console.log(url);
-		axios.get(url).then((response: any) => test = JSON.stringify(response.data));
+		axios.get(url).then((response: any) => {test = JSON.stringify(response.data, null, '  '); console.log(test)});
 	}
 </script>
 

@@ -19,8 +19,8 @@ export const GET: RequestHandler = async ({ url }) => {
 		medias.push({ mediaType: parseInt(mediaTypes[idx]), id: parseInt(id)});
 	});
 	console.log(medias)
-	getAllMediaCredits(medias);
+	let result = await getAllMediaCredits(medias);
 
 	let movieInfo = { data: 1234 };
-	return json(movieInfo.data);
+	return json(result);
 }
