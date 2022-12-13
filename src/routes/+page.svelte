@@ -1,30 +1,23 @@
 <script lang="ts">
 	import axios from 'axios';
-	let test = '{}'
-	export async function onClick() {
-		console.log(';)');
-		const queryParams: string = new URLSearchParams([
-			['id', '9718'], 
-			['id', '12133'], 
-			// ['id', '5678'],
-			['type', '0'],
-			['type', '0'],
-			// ['type', '0'],
-		]).toString();
-		const url: string = '/api/tmdb' + '?' + queryParams;
-		console.log(url);
-		axios.get(url).then((response: any) => {test = JSON.stringify(response.data, null, '  '); console.log(test)});
-	}
+	import SearchBar from './SearchBar.svelte';
+	import type { CompositeMedia } from '$lib/media';
+
+	let mediaData: CompositeMedia;
 </script>
 
-<h1>Common Credits</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<h1 class="title-logo">Common Credits</h1>
 
-<button type="button" class="btn btn-outline-primary" on:click={onClick}>Click me!</button>
+<SearchBar bind:mediaData={mediaData}/>
 
-<p>{test}</p>
+<p>{"test"}</p>
 
 <style>
+	@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&display=swap');
+	.title-logo {
+		font-family: 'Courier Prime', monospace;
+	}
+
 	p {
 		margin: 2rem;
 	}
