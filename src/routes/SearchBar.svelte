@@ -82,7 +82,7 @@
 </form>
 
 <button
-	class="btn btn-primary"
+	class="btn btn-primary mx-auto d-block"
 	type="submit"
 	on:click={() => getMediaInfo()} disabled={(selectedMedia.includes(undefined) || enteredId.includes(undefined)) && false}>{goBtnText}</button
 >
@@ -90,5 +90,9 @@
 <style>
 	.first-radio {
 		border-radius: 0.375rem 0 0 0.375rem !important;
+	}
+
+	button {
+		width: 10%;
 	}
 </style>

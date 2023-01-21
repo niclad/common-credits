@@ -119,10 +119,10 @@
 		filter: drop-shadow(0 0 0.35em var(--fg-bright));
 	}
 
-  .footer {
+  /* .footer {
     background-color: var(--fg-dark);
     border-top-color: var(--fg-dark) !important;
-  }
+  } */
 
   a {
     color: var(--text-color);

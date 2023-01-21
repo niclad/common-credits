@@ -6,6 +6,8 @@ interface BasicMedia {
 	id: number;
 	name: string;
 	releaseDate: string;
+	lastAirDate?: string;
+	inProduction?: boolean;
 }
 
 /**
@@ -61,6 +63,15 @@ interface QueryParams {
 	id: number;
 }
 
+// Statuses for a BasicMedia's production
+enum Status {
+	released = 'Released',
+	inProduction = 'In Production',
+	announced = 'Announced',
+	ended = 'Ended',
+	postProduction = 'Post Production',
+}
+
 export { 
 	BasicMedia,
 	CompositeMedia,
@@ -68,5 +79,6 @@ export {
 	MediaCast,
 	MediaCrew,
 	MediaType,
+	Status,
 	QueryParams,
 }

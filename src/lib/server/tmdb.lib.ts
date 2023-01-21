@@ -52,10 +52,12 @@ async function getAllMediaCredits(titles: Media.QueryParams[]): Promise<Media.Co
 
 		// Create the title object
 		const titleInfo: Media.BasicMedia = {
-			backdropPath: titleDetails.backdrop_path,
+			backdropPath: Media.MediaType.Movie === title.mediaType ? titleDetails.backdrop_path : titleDetails.poster_path,
 			id: titleDetails.id,
 			name: Media.MediaType.Movie === title.mediaType ? titleDetails.original_title : titleDetails.name,
-			releaseDate: Media.MediaType.Movie === title.mediaType ? titleDetails.release_date : titleDetails.first_air_date
+			releaseDate: Media.MediaType.Movie === title.mediaType ? titleDetails.release_date : titleDetails.first_air_date,
+			lastAirDate: Media.MediaType.Movie === title.mediaType ? undefined : titleDetails.last_air_date,		// Movies don't have an end date
+			inProduction: Media.MediaType.Movie === title.mediaType ? undefined : titleDetails.in_production,	// Movies don't have an in production status
 		};
 
 		allTitles.push(titleInfo);
