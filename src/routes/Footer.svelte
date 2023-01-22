@@ -23,7 +23,7 @@
 	<div class="container-xl d-flex flex-wrap justify-content-between align-items-center">
 		<p class="col-md-4 mb-0 text-begin" />
 		<a
-			class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto text-decoration-none bottom-logo"
+			class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto text-decoration-none bottom-logo title-logo"
 			href="/">Common Credits</a
 		>
 		<ul class="nav col-md-4 justify-content-end">
@@ -51,7 +51,7 @@
 				</div>
 				<div class="modal-body text-start">
 					{#if links[i] === 'About'}
-						<div class="card text-bg-light mb-3">
+						<div class="card mb-3">
 							<div class="card-body">
 								<div class="row align-items-center">
 									<div class="col-4">
@@ -116,13 +116,13 @@
 
 	.bottom-logo:hover {
     color: var(--text-color);
-		filter: drop-shadow(0 0 0.35em var(--fg-bright));
+		filter: drop-shadow(0 0 0.5em #fff);
 	}
 
-  .footer {
+  /* .footer {
     background-color: var(--fg-dark);
     border-top-color: var(--fg-dark) !important;
-  }
+  } */
 
   a {
     color: var(--text-color);

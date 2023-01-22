@@ -3,7 +3,7 @@ import type { RequestHandler } from './$types';
 import axios from 'axios';
 import querystring from 'node:querystring';
 import { json } from '@sveltejs/kit';
-import type * as Media from '$lib/media.d';
+import type * as Media from '$lib/media';
 import { getAllMediaCredits } from '$lib/server/tmdb.lib';
 
 
