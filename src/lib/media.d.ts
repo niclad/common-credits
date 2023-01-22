@@ -3,6 +3,7 @@ interface BaseMedia {
 	id: number;
 	name: string;
 	releaseDate: string;
+	voteAverage: number;
 }
 
 /**

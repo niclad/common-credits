@@ -54,6 +54,7 @@ async function getAllMediaCredits(titles: Media.QueryParams[]): Promise<Media.Co
 			releaseDate: Media.MediaType.Movie === title.mediaType ? titleDetails.release_date : titleDetails.first_air_date,
 			lastAirDate: Media.MediaType.Movie === title.mediaType ? undefined : titleDetails.last_air_date,	// Movies don't have an end date
 			inProduction: Media.MediaType.Movie === title.mediaType ? undefined : titleDetails.in_production,	// Movies don't have an in production status
+			voteAverage: titleDetails.vote_average,
 		};
 
 
