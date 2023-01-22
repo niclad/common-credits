@@ -1,9 +1,13 @@
 <script lang="ts">
+	import type { BasicMedia, MediaCast, MediaCrew } from '$lib/media.d';
+	import { instanceOfBasicMedia } from '$lib/media.lib';
 	import TitleCard from './TitleCard.svelte';
 
 	export let accordionId = 0;
 	export let accordionTitle = `Info Set #${accordionId + 1}`;
 	export let isExpanded = false;
+
+	export let data: BasicMedia[] | MediaCast[] | MediaCrew[];
 </script>
 
 <div class="accordion-item">
@@ -28,46 +32,15 @@
 	>
 		<div class="accordion-body">
 			<div class="row row-cols-6 g-2">
-				<div class="col">
-					<div class="p-2">
-						<TitleCard />
-					</div>
-				</div>
-				<div class="col">
-					<div class="p-2">
-						<TitleCard />
-					</div>
-				</div>
-				<div class="col">
-					<div class="p-2">
-						<TitleCard />
-					</div>
-				</div>
-				<div class="col">
-					<div class="p-2">
-						<TitleCard />
-					</div>
-				</div>
-				<div class="col">
-					<div class="p-2">
-						<TitleCard />
-					</div>
-				</div>
-				<div class="col">
-					<div class="p-2">
-						<TitleCard />
-					</div>
-				</div>
-				<div class="col">
-					<div class="p-2">
-						<TitleCard />
-					</div>
-				</div>
-				<div class="col">
-					<div class="p-2">
-						<TitleCard />
-					</div>
-				</div>
+				{#each data as mediaItem}
+					{#if instanceOfBasicMedia(mediaItem)}
+						<div class="col">
+							<div class="p-2">
+								<TitleCard title={mediaItem}/>
+							</div>
+						</div>
+					{/if}
+				{/each}
 			</div>
 		</div>
 	</div>

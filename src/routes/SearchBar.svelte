@@ -5,6 +5,9 @@
 	// The requested media data
 	export let mediaData;
 
+	// Whether the 'Go' button has been clicked
+	export let isSubmitted = false;
+
 	// Search bar settings
 	const numSearchBars = 2;
 	const idPlaceholder = 'Movie or TV show id...';
@@ -22,6 +25,8 @@
 
 	// Get the movie info
 	async function getMediaInfo() {
+		isSubmitted = true;
+
 		// Check if it's being tested
 		if (selectedMedia.includes(undefined) || enteredId.includes(undefined)) {
 			selectedMedia = ['0', '0'];

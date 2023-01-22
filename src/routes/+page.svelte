@@ -1,9 +1,8 @@
 <script lang="ts">
-	import axios from 'axios';
 	import AccordionItem from './AccordionItem.svelte';
 	import SearchBar from './SearchBar.svelte';
-	import TitleCard from './TitleCard.svelte';
-	import type { CompositeMedia } from '$lib/media';
+	import type { CompositeMedia } from '$lib/media.d';
+	import { slide } from 'svelte/transition';
 
 	let mediaData: CompositeMedia;
 
@@ -21,21 +20,18 @@
 
 <SearchBar bind:mediaData />
 
-<p>{'test'}</p>
-
-<div class="accordion pb-5">
-	<AccordionItem accordionId={0} accordionTitle={'Titles'} isExpanded={true}/>
-	<AccordionItem accordionId={1} accordionTitle={'Cast'}/>
-	<AccordionItem accordionId={2} accordionTitle={'Crew'}/>
-</div>
+<!-- Display the medias' data if it's available -->
+{#if mediaData}
+	<div class="accordion py-5" transition:slide>
+		<AccordionItem accordionId={0} accordionTitle={'Titles'} isExpanded={true} data={mediaData.titles} />
+		<AccordionItem accordionId={1} accordionTitle={'Cast'} data={mediaData.cast}/>
+		<AccordionItem accordionId={2} accordionTitle={'Crew'} data={mediaData.crew}/>
+	</div>
+{/if}
 
 <style>
 	@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&display=swap');
-	.title-logo {
+	:global(.title-logo) {
 		font-family: 'Courier Prime', monospace;
-	}
-
-	p {
-		margin: 2rem;
 	}
 </style>
