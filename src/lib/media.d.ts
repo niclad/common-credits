@@ -43,7 +43,7 @@ interface Person {
  */
 interface MediaCast extends Person {
   type: "cast";
-  character: string;
+  character: string | string[];
 }
 
 /**
@@ -53,7 +53,7 @@ interface MediaCrew extends Person {
   type: "crew";
   original_name: string;
   department: string;
-  job: string;
+  job: string | string[];
 }
 
 /**
