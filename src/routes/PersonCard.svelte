@@ -16,7 +16,7 @@
   };
 
   $: personLink = `${BASE_TMDB_URL}/person/${person.id}`;
-  $: infoDisplay = person.known_for_department;
+  $: infoDisplay = determineInfoDisplay(person);
   $: imageUrl = headShotImage(person);
   let noHeadShot = false;
 
@@ -29,14 +29,23 @@
     }
   }
 
-
   function determineInfoDisplay(person: MediaCast | MediaCrew): string {
     if (instanceOfMediaCast(person)) {
-      return person.known_for_department;
+      if (Array.isArray(person.character)) {
+        return person.character.join(', ');
+      } else {
+        return person.character ?? 'wtf';
+      }
     } else {
-      return person.job;
+      if (Array.isArray(person.job)) {
+        return person.job.join(', ');
+      } else {
+        return person.job ?? 'ok?';
+      }
     }
   }
+
+  console.debug(person);
 </script>
 
 <div class="card" transition:fade>
@@ -53,7 +62,7 @@
     </div>
     <div class="row">
       <div class="col-md-auto pe-0">
-        <p class="card-text">{person.id} <i>{infoDisplay}</i></p>
+        <p class="card-text"><i>{infoDisplay}</i></p>
       </div>
     </div>
   </div>

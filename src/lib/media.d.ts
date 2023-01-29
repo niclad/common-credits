@@ -14,6 +14,23 @@ interface Movie extends BaseMedia {
   // the life of me work out how to use this as a class... :(
   type: "movie"; 
 }
+// Take note! This is important!
+class MovieImpl implements Movie {
+  constructor(
+    public posterPath: string,
+    public id: number,
+    public name: string,
+    public releaseDate: string,
+    public voteAverage: number,
+  ) { 
+    this.type = "movie";
+    this.posterPath = posterPath;
+    this.id = id;
+    this.name = name;
+    this.releaseDate = releaseDate;
+    this.voteAverage = voteAverage;
+  }
+}
 
 /**
  * Minimum info needed for a tv show
@@ -43,7 +60,7 @@ interface Person {
  */
 interface MediaCast extends Person {
   type: "cast";
-  character: string;
+  character: string | string[];
 }
 
 /**
@@ -53,7 +70,7 @@ interface MediaCrew extends Person {
   type: "crew";
   original_name: string;
   department: string;
-  job: string;
+  job: string | string[];
 }
 
 /**

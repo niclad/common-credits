@@ -1,6 +1,7 @@
 import * as Media from '$lib/media.d';
 import { TMDB_API_KEY } from '$env/static/private';
 import axios from 'axios';
+import { instanceOfMediaCast } from '$lib/media.lib';
 
 async function getAllMediaCredits(titles: Media.QueryParams[]): Promise<Media.CompositeMedia> {
   const apiBaseUrl = 'https://api.themoviedb.org';
@@ -8,8 +9,6 @@ async function getAllMediaCredits(titles: Media.QueryParams[]): Promise<Media.Co
   let allTitles: Media.BasicMedia[] = [];
   let commonCast: Media.MediaCast[] = [];
   let commonCrew: Media.MediaCrew[] = [];
-  console.log(titles)
-
   var castMap: Map<number, number> = new Map();
   var crewMap: Map<number, number> = new Map();
 
@@ -25,16 +24,42 @@ async function getAllMediaCredits(titles: Media.QueryParams[]): Promise<Media.Co
     const creditInfo: Media.Credits = response.data;
 
     // Parse the cast
-    const creditCast: Media.MediaCast[] = creditInfo.cast;
+    // const creditCast: Media.MediaCast[] = creditInfo.cast;
+    const creditCast: Media.MediaCast[] = Array.from(creditInfo.cast, (castMember): Media.MediaCast => {
+      return {
+        type: 'cast',
+        id: castMember.id,
+        known_for_department: castMember.known_for_department,
+        name: castMember.name,
+        popularity: castMember.popularity,
+        profile_path: castMember.profile_path,
+        character: castMember.character,
+      };
+    });
+
     castMap = countOccurance(creditCast, castMap);
 
 
     // Parse the crew
-    const creditCrew: Media.MediaCrew[] = creditInfo.crew;
-    /**
-     * IMPORTANT NOTE: need to merge crew members with multiple jobs BEFORE counting occurances!!!
-     */
-    crewMap = countOccurance(creditCrew, crewMap);
+    // let creditCrew: Media.MediaCrew[] = creditInfo.crew;
+    let creditCrew: Media.MediaCrew[] = Array.from(creditInfo.crew, (crewMember): Media.MediaCrew => {
+      return {
+        type: 'crew',
+        id: crewMember.id,
+        known_for_department: crewMember.known_for_department,
+        name: crewMember.name,
+        popularity: crewMember.popularity,
+        profile_path: crewMember.profile_path,
+        original_name: crewMember.original_name,
+        department: crewMember.department,
+        job: crewMember.job,
+      };
+    });
+
+    // This will merge duplicates on the same title
+    // i.e. so we don't have multiple entries for the same person on the same title
+    creditCrew = mergeDuplicates(creditCrew);
+    crewMap = countOccurance(creditCrew, crewMap); // Update thhe occurance count
 
     // Remove singular entries
     // ... For cast
@@ -104,6 +129,41 @@ function multiOccurance(creditMember: Media.MediaCast | Media.MediaCrew, creditM
     return true;
   }
   return false;
+}
+
+/**
+ * Merge duplicate crew members with multiple jobs
+ * @param creditList The list of credits to merge (currently only supports crew)
+ * @returns Returns the merged list of credit members
+ */
+function mergeDuplicates(creditList: Media.MediaCrew[]): Media.MediaCrew[] {
+  const mergedCrew: Media.MediaCrew[] = [];
+
+  for (const crewMember of creditList) {
+    // Check if the crew member already exists
+    const existingMember = mergedCrew.find((member: Media.MediaCrew | Media.MediaCast) => member.id === crewMember.id);
+
+    // If it does, merge the jobs
+    if (existingMember) {
+      // Check if the existing member has multiple jobs
+      if (Array.isArray(existingMember.job) && !Array.isArray(crewMember.job)) {
+        existingMember.job.push(crewMember.job);
+      } else if (!Array.isArray(existingMember.job) && !Array.isArray(crewMember.job)) {
+        // If the existing member has a single job, and the new member has a single job, create an array
+        existingMember.job = [existingMember.job, crewMember.job];
+      } else {
+        // Otherwise, throw an error
+        throw new Error('A crew member has a an unexpected number of jobs: ' + existingMember.id + ', ' + existingMember.job);
+      }
+    } else {
+      // Otherwise, add the crew member to the list
+      mergedCrew.push(crewMember);
+    }
+  }
+
+  return mergedCrew;
+
+  // Side note: GitHub Copilot is scary good!
 }
 
 export {
