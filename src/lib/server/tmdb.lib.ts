@@ -55,8 +55,11 @@ async function getAllMediaCredits(titles: Media.QueryParams[]): Promise<Media.Co
         job: crewMember.job,
       };
     });
+
+    // This will merge duplicates on the same title
+    // i.e. so we don't have multiple entries for the same person on the same title
     creditCrew = mergeDuplicates(creditCrew);
-    crewMap = countOccurance(creditCrew, crewMap);
+    crewMap = countOccurance(creditCrew, crewMap); // Update thhe occurance count
 
     // Remove singular entries
     // ... For cast
