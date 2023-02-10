@@ -25,7 +25,7 @@ async function getAllMediaCredits(titles: Media.QueryParams[]): Promise<Media.Co
     try {
       response = await axios.get(creditsUrl);
     } catch (err) {
-      throw error(404, `Media with ID ${title.id} not found for a ${mediaType}.`);
+      throw error(404, `Media with ID ${title.id} could not be found for a ${mediaType}.`);
     }
     const creditInfo: Media.Credits = response.data;
 

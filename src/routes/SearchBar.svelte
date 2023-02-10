@@ -10,7 +10,7 @@
 
 	// Search bar settings
 	const numSearchBars = 2;
-	const idPlaceholder = 'Movie or TV show id...';
+	const idPlaceholder = 'Movie or TV show ID...';
 	const goBtnText = 'Go';
 
 	// Acceptable media types
@@ -29,40 +29,46 @@
 	async function getMediaInfo() {
 		isSubmitted = true;
 
+    
 		// Check if it's being tested
 		if (selectedMedia.includes(undefined) || enteredId.includes(undefined)) {
-			selectedMedia = ['0', '0'];
+      selectedMedia = ['0', '0'];
 			enteredId = ['9718', '12133'];
 		}
-
+    
 		// Build the search parameters
 		let searchParams = [];
 		for (const id of enteredId) {
-			searchParams.push(['id', id]);
+      searchParams.push(['id', id]);
 		}
 		for (const mediaType of selectedMedia) {
-			searchParams.push(['type', mediaType]);
+      searchParams.push(['type', mediaType]);
 		}
 		const queryParams = new URLSearchParams(searchParams).toString();
-
+    
 		// Build the request URL
 		const url = `/api/tmdb?${queryParams}`;
-
+    
 		// Request the results
 		axios.get(url).then(
-			(response) => {
-				mediaData = response.data;
+      (response) => {
+        mediaData = response.data;
 				console.log('Successfully obtained media data.');
+
+        // Check if there's an error message and clear it
+        if (errorMessage) {
+          errorMessage = '';
+        }
 			},
 			(error) => {
-				errorMessage = error.response.data.message;
+        errorMessage = error.response.data.message;
 				console.log(errorMessage);
 			}
-		);
+      );
 	}
 </script>
 
-<!-- Seaerch bars -->
+<!-- Search bars -->
 <form>
 	{#each Array(numSearchBars) as _, i}
 		<div class="input-group mb-3">
