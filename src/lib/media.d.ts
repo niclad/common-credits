@@ -102,11 +102,16 @@ interface QueryParams {
 
 // Statuses for a BasicMedia's production
 enum Status {
-  released = 'Released',
-  inProduction = 'In Production',
   announced = 'Announced',
+  cancelled = 'Cancelled' | 'Canceled',
   ended = 'Ended',
+  inProduction = 'In Production',
+  pilot = 'Pilot',
+  planned = 'Planned',
   postProduction = 'Post Production',
+  released = 'Released',
+  returningSeries = 'Returning Series',
+  rumored = 'Rumored',
 }
 
 export {
