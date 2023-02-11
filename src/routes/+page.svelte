@@ -30,8 +30,4 @@
 {/if}
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&display=swap');
-  :global(.title-logo) {
-    font-family: 'Courier Prime', monospace;
-  }
 </style>
