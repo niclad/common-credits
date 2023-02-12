@@ -1,9 +1,7 @@
 <script lang="ts">
 	import axios from 'axios';
-	import { fade } from 'svelte/transition';
+  import { fade } from 'svelte/transition';
 	import { page } from '$app/stores';
-	import type { QueryParams } from '$lib/media';
-	import { hexEncode, hexDecode } from '$lib/utils';
 
 	// The requested media data
 	export let mediaData;
@@ -25,23 +23,10 @@
 	// Entered values
 	let selectedMedia = Array(numSearchBars);
 	let enteredId = Array(numSearchBars);
-	
-	let errorMessage: string;
-	
-	// Check the URL for a query
-	const url = new URL($page.url.toString());
-	const query = url.searchParams.get('q');
-	if (query) {
-		const decodedQuery = JSON.parse(hexDecode(query)) as QueryParams[];
-		for (const [i, query] of decodedQuery.entries()) {
-			selectedMedia[i] = query.mediaType;
-			enteredId[i] = query.id;
-		}
-	}
 
-	/**
-	 * Get the media info from the API
-	 */
+	let errorMessage: string;
+
+	// Get the movie info
 	async function getMediaInfo() {
 		isSubmitted = true;
 
@@ -82,66 +67,28 @@
 		);
 	}
 
-	/**
-	 * Build the encoded link to the query
-	 */
-	function buildEncodedLink(): string {
-		console.debug('running buildEncodedLink');
-		if (selectedMedia.includes(undefined) || enteredId.includes(undefined)) {
-			return $page.url.toString();
-		}
+  let copyMsg: string;
+  let copySuccess: boolean = false;
+  let copyLink: string = $page.url.toString();
 
-		// Push QueryParams into an array
-		let queryArray: QueryParams[] = [];
-		for (const [i, id] of enteredId.entries()) {
-			if (id) {
-				queryArray.push({
-					id: id,
-					mediaType: selectedMedia[i]
-				});
-			} else {
-				// Shouldn't get here!
-				return $page.url.toString();
-			}
-		}
+  function copyToClipboard() {
 
-		// If nothing was pushed into the array, return the current URL
-		if (queryArray.length <= 0) {
-			// Shouldn't get here!
-			return $page.url.toString();
-		}
-
-		const encodedQuery: string = hexEncode(JSON.stringify(queryArray));
-		return `${$page.url.toString()}?q=${encodedQuery}`;
-	}
-
-	// Make copyable link reactive
-	$: copyLink = buildEncodedLink(); // The link to copy
-	let copyMsg: string; // Message to display when copying
-	let copySuccess: boolean = false; // Whether the copy was successful
-
-	/**
-	 * Copy the link to the clipboard
-	 */
-	function copyToClipboard() {
-		// Actually copy the link to the clipboard
-		navigator.clipboard.writeText(copyLink).then(
-			() => {
-				// Copy success
-				console.log(`Copied ${copyLink} to clipboard!`);
-				copyMsg = 'Copied to clipboard!';
-				copySuccess = true;
-				setTimeout(() => {
-					copyMsg = '';
-					copySuccess = false;
-				}, 2000);
-			},
-			() => {
-				// Copy error
-				console.log('Failed to copy to clipboard! Highlight and copy manually.');
-			}
-		);
-	}
+    // Actually copy the link to the clipboard
+    navigator.clipboard.writeText(copyLink).then(
+      () => {
+        console.log(`Copied ${copyLink} to clipboard!`);
+        copyMsg = 'Copied to clipboard!';
+        copySuccess = true;
+        setTimeout(() => {
+          copyMsg = '';
+          copySuccess = false;
+        }, 2000);
+      },
+      () => {
+        console.log('Failed to copy to clipboard! Highlight and copy manually.');
+      }
+    );
+  }
 </script>
 
 <!-- Search bars -->
@@ -177,60 +124,50 @@
 	{/each}
 </form>
 
-<div class="d-flex justify-content-center align-items-center">
+<div class="row justify-content-center">
 	<!-- Go button -->
-	<button
-		class="btn btn-primary me-1"
-		title="Run a query"
-		type="submit"
-		on:click={() => {
-			getMediaInfo();
-			copyLink = buildEncodedLink();
-		}}
-		disabled={(selectedMedia.includes(undefined) || enteredId.includes(undefined)) && false}
-		>{goBtnText}</button
-	>
-	<!-- Share button -->
-	<div class="dropdown">
+	<div class="col">
 		<button
-			type="button"
-			class="btn btn-secondary ms-1"
-			data-bs-toggle="dropdown"
-			aria-expanded="false"
-			data-bs-auto-close="outside"
-			title="Get a link to share!"
+			class="btn btn-primary"
+			type="submit"
+			on:click={() => getMediaInfo()}
+			disabled={(selectedMedia.includes(undefined) || enteredId.includes(undefined)) && false}
+			>{goBtnText}</button
 		>
-			<i class="bi bi-share-fill" />
-		</button>
-		<div class="dropdown-menu p-1 share-menu">
-			<div class="d-flex flex-row justify-content-center align-items-center">
-				<!-- Link display -->
-				<div
-					class="alert alert-dark user-select-all mb-0 overflow-auto text-nowrap flex-shrink-1 lh-1 link-box"
-				>
-					{copyLink}
+	</div>
+	<!-- Share button -->
+	<div class="col">
+		<div class="dropdown">
+			<button
+				type="button"
+				class="btn btn-secondary"
+				data-bs-toggle="dropdown"
+				aria-expanded="false"
+				data-bs-auto-close="outside"
+			>
+				<i class="bi bi-share-fill" />
+			</button>
+			<div class="dropdown-menu p-1 share-menu">
+				<div class="d-flex flex-row justify-content-center align-items-center">
+					<!-- <div class="col"> -->
+						<div class="alert alert-dark user-select-all mb-0 overflow-auto text-nowrap flex-shrink-1 lh-1 link-box">{copyLink}</div>
+					<!-- </div> -->
+					<!-- <div class="col"> -->
+						<button class:btn-success={copySuccess} class="btn btn-primary btn-sm ms-1 flex-shrink-0" on:click={copyToClipboard}>
+              {#if copySuccess}
+                <i class="bi bi-check2" />
+              {:else}
+                <i class="bi bi-clipboard2-fill" />
+              {/if}
+              Copy</button>
+					<!-- </div> -->
 				</div>
-
-				<!-- Copy button -->
-				<button
-					class:btn-success={copySuccess}
-					class="btn btn-primary btn-sm ms-1 flex-shrink-0"
-					on:click={copyToClipboard}
-				>
-					{#if copySuccess}
-						<i class="bi bi-check2" />
-					{:else}
-						<i class="bi bi-clipboard2-fill" />
-					{/if}
-					Copy</button
-				>
+        {#if copyMsg && false}
+          <div class="badge text-bg-success mt-1 mb-0 text-center" out:fade>{copyMsg}</div>
+        {/if}
 			</div>
-			{#if copyMsg && false}
-				<div class="badge text-bg-success mt-1 mb-0 text-center" out:fade>{copyMsg}</div>
-			{/if}
 		</div>
 	</div>
-	<!-- </div> -->
 </div>
 
 <!-- Error alert -->
@@ -247,6 +184,10 @@
 	.first-radio {
 		border-radius: 0.375rem 0 0 0.375rem !important;
 	}
+
+	/* button {
+		width: 10%;
+	} */
 
 	.share-menu {
 		max-width: 400px;
