@@ -27,6 +27,17 @@
 	let enteredId = Array(numSearchBars);
 	
 	let errorMessage: string;
+	
+	// Check the URL for a query
+	const url = new URL($page.url.toString());
+	const query = url.searchParams.get('q');
+	if (query) {
+		const decodedQuery = JSON.parse(hexDecode(query)) as QueryParams[];
+		for (const [i, query] of decodedQuery.entries()) {
+			selectedMedia[i] = query.mediaType;
+			enteredId[i] = query.id;
+		}
+	}
 
 	/**
 	 * Get the media info from the API
@@ -71,25 +82,13 @@
 		);
 	}
 
-	// Check the URL for a query
-	const url = new URL($page.url.toString());
-	const query = url.searchParams.get('q');
-	if (query) {
-		const decodedQuery = JSON.parse(hexDecode(query)) as QueryParams[];
-		for (const [i, query] of decodedQuery.entries()) {
-			selectedMedia[i] = query.mediaType;
-			enteredId[i] = query.id;
-		}
-		getMediaInfo();
-	}
-
 	/**
 	 * Build the encoded link to the query
 	 */
 	function buildEncodedLink(): string {
-		const defaultUrl = $page.url.origin;
+		console.debug('running buildEncodedLink');
 		if (selectedMedia.includes(undefined) || enteredId.includes(undefined)) {
-			return defaultUrl;
+			return $page.url.toString();
 		}
 
 		// Push QueryParams into an array
@@ -102,30 +101,22 @@
 				});
 			} else {
 				// Shouldn't get here!
-				return defaultUrl;
+				return $page.url.toString();
 			}
 		}
 
 		// If nothing was pushed into the array, return the current URL
 		if (queryArray.length <= 0) {
 			// Shouldn't get here!
-			return defaultUrl;
+			return $page.url.toString();
 		}
 
 		const encodedQuery: string = hexEncode(JSON.stringify(queryArray));
-		const fullUrl: string = `${defaultUrl}?q=${encodedQuery}`;
-
-		if (fullUrl.length > 2000) {
-			// URL is too long
-			console.error('The generated share link is too long. Unable to share.');
-			return defaultUrl;
-		}
-
-		return fullUrl;
+		return `${$page.url.toString()}?q=${encodedQuery}`;
 	}
 
 	// Make copyable link reactive
-	let copyLink: string = $page.url.toString(); // The link to copy
+	$: copyLink = buildEncodedLink(); // The link to copy
 	let copyMsg: string; // Message to display when copying
 	let copySuccess: boolean = false; // Whether the copy was successful
 
@@ -208,9 +199,6 @@
 			aria-expanded="false"
 			data-bs-auto-close="outside"
 			title="Get a link to share!"
-			on:click={() => {
-				copyLink = buildEncodedLink();
-			}}
 		>
 			<i class="bi bi-share-fill" />
 		</button>

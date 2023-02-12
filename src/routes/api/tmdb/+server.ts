@@ -5,7 +5,7 @@ import type * as Media from '$lib/media';
 
 const apiUrl = 'https://api.themoviedb.org/3';
 
-export const GET = (async ({ url }) => {
+export const GET: RequestHandler = async ({ url }) => {
 	const ids = url.searchParams.getAll('id');
 	const mediaTypes = url.searchParams.getAll('type');
 
@@ -23,4 +23,4 @@ export const GET = (async ({ url }) => {
 	} catch (err: unknown) {
 		throw err;
 	}
-}) satisfies RequestHandler;
+}
