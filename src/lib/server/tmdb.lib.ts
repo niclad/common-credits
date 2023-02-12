@@ -2,7 +2,6 @@ import * as Media from '$lib/media.d';
 import { TMDB_API_KEY } from '$env/static/private';
 import axios from 'axios';
 import { instanceOfMediaCast } from '$lib/media.lib';
-import { error } from '@sveltejs/kit';
 
 async function getAllMediaCredits(titles: Media.QueryParams[]): Promise<Media.CompositeMedia> {
   const apiBaseUrl = 'https://api.themoviedb.org';
@@ -21,12 +20,7 @@ async function getAllMediaCredits(titles: Media.QueryParams[]): Promise<Media.Co
     const creditsUrl = `${apiBaseUrl}/${apiVer}/${mediaType}/${title.id}/credits?${queryParams}`;
 
     // Get the credits for the current title
-    let response;
-    try {
-      response = await axios.get(creditsUrl);
-    } catch (err) {
-      throw error(404, `Media with ID ${title.id} not found for a ${mediaType}.`);
-    }
+    let response = await axios.get(creditsUrl);
     const creditInfo: Media.Credits = response.data;
 
     // Parse the cast

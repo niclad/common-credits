@@ -44,6 +44,8 @@
       }
     }
   }
+
+  console.debug(person);
 </script>
 
 <div class="card" transition:fade>

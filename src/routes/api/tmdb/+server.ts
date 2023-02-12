@@ -1,7 +1,11 @@
-import { error, json } from '@sveltejs/kit';
-import { getAllMediaCredits } from '$lib/server/tmdb.lib';
+import { env } from '$env/dynamic/private';
 import type { RequestHandler } from './$types';
+import axios from 'axios';
+import querystring from 'node:querystring';
+import { json } from '@sveltejs/kit';
 import type * as Media from '$lib/media';
+import { getAllMediaCredits } from '$lib/server/tmdb.lib';
+
 
 const apiUrl = 'https://api.themoviedb.org/3';
 
@@ -12,15 +16,11 @@ export const GET: RequestHandler = async ({ url }) => {
 	// Create a map of types and IDs
 	let medias: Media.QueryParams[] = [];
 	ids.forEach((id, idx) => {
-		medias.push({ mediaType: parseInt(mediaTypes[idx]), id: parseInt(id) });
+		medias.push({ mediaType: parseInt(mediaTypes[idx]), id: parseInt(id)});
 	});
 	console.log(medias)
+	let result = await getAllMediaCredits(medias);
 
-	let result: Media.CompositeMedia;
-	try {
-		result = await getAllMediaCredits(medias);
-		return json(result);
-	} catch (err: unknown) {
-		throw err;
-	}
+	let movieInfo = { data: 1234 };
+	return json(result);
 }
