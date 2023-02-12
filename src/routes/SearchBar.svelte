@@ -77,7 +77,7 @@
       <input
         bind:value={enteredId[i]}
         type="text"
-        class="form-control id-entry"
+        class="form-control"
         placeholder={idPlaceholder}
         aria-label=""
         required
@@ -99,9 +99,5 @@
 
   button {
     width: 10%;
-  }
-
-  .id-entry {
-    font-family: monospace;
   }
 </style>
