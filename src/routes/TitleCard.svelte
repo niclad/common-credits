@@ -44,7 +44,7 @@
 	}
 
 	const placeholderImgUrl: string = 'https://via.placeholder.com/300x450?text=No+Image+Found';
-	const imgUrl: string = title.posterPath ? BASE_IMG_URL + title.posterPath : placeholderImgUrl;
+	$: imgUrl = title.posterPath ? BASE_IMG_URL + title.posterPath : placeholderImgUrl;
 </script>
 
 <div class="card" transition:fade>
