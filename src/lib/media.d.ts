@@ -39,7 +39,7 @@ interface TvRole {
 type BasicMedia = Movie | Tv;
 
 interface Role {
-  [id: number]: string;
+  [id: string]: string;
 }
 // interface Role {
 //   id: number;       // ID of the title the role is associated with

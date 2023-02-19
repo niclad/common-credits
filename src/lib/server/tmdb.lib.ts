@@ -14,6 +14,7 @@ async function getAllMediaCredits(titles: QueryParams[]): Promise<CompositeMedia
 
   for (const title of titles) {
     let titleInfo: { details: Tv | Movie, credits: MovieCredits | TvCredits };
+    const titleType: string = title.mediaType === MediaType.Movie ? 'movie' : 'tv';
 
     // If given a movie, get the credits for that movie
     if (title.mediaType === MediaType.Movie) {
@@ -42,7 +43,7 @@ async function getAllMediaCredits(titles: QueryParams[]): Promise<CompositeMedia
           profile_path: castMember.profile_path,
           credit_id: castMember.credit_id,
           characters: {
-            [title.id]: castMember.character,
+            [`${title.id}${titleType}`]: castMember.character,
           },
         }
       });
@@ -61,7 +62,7 @@ async function getAllMediaCredits(titles: QueryParams[]): Promise<CompositeMedia
           credit_id: crewMember.credit_id,
           department: crewMember.department,
           jobs: {
-            [title.id]: crewMember.job,
+            [`${title.id}${titleType}`]: crewMember.job,
           },
         }
       });
@@ -78,7 +79,7 @@ async function getAllMediaCredits(titles: QueryParams[]): Promise<CompositeMedia
         continue;
       }
 
-      commonCast[i].characters[title.id] = currCastMember.character;
+      commonCast[i].characters[`${title.id}${titleType}`] = currCastMember.character;
     }
     
     for (let i = 0; i < commonCrew.length; i++) {
@@ -89,7 +90,7 @@ async function getAllMediaCredits(titles: QueryParams[]): Promise<CompositeMedia
         continue;
       }
 
-      commonCrew[i].jobs[title.id] = currCrewMember.job;
+      commonCrew[i].jobs[`${title.id}${titleType}`] = currCrewMember.job;
     }
   }
 
