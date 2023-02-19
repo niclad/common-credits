@@ -8,9 +8,16 @@
   export let person: MediaCast | MediaCrew = {
     type: 'cast',
     id: 0,
+    adult: false,
+    gender: 0,
     name: 'Person Name',
     profile_path: '/52kqB0Bei1TaTBx2rABrijVhhTG.jpg',
-    character: 'Character Name',
+    characters: {
+      '123': 'Character Name A',
+      '456': 'Character Name B',
+    },
+    original_name: 'Person Name',
+    credit_id: 'DEADBEEF',
     known_for_department: 'Acting',
     popularity: 0,
   };
@@ -30,19 +37,21 @@
   }
 
   function determineInfoDisplay(person: MediaCast | MediaCrew): string {
+    let displayedText = '';
     if (instanceOfMediaCast(person)) {
-      if (Array.isArray(person.character)) {
-        return person.character.join(', ');
-      } else {
-        return person.character ?? 'wtf';
+      for (const [key, value] of Object.entries(person.characters)) {
+        displayedText += `${key}: ${value}\n`;
       }
+
+      if (displayedText) return displayedText;
     } else {
-      if (Array.isArray(person.job)) {
-        return person.job.join(', ');
-      } else {
-        return person.job ?? 'ok?';
+      for (const [key, value] of Object.entries(person.jobs)) {
+        displayedText += `${key}: ${value}\n`;
       }
+      if (displayedText) return displayedText;
     }
+
+    return '&#x1F614;';
   }
 </script>
 
@@ -60,7 +69,7 @@
     </div>
     <div class="row">
       <div class="col-md-auto pe-0">
-        <p class="card-text"><i>{infoDisplay}</i></p>
+        <p class="card-text info-display"><i>{infoDisplay}</i></p>
       </div>
     </div>
   </div>
@@ -79,5 +88,9 @@
   .noimg {
     background-color: lightgrey;
     height: calc(1.5 * 186px);
+  }
+
+  .info-display {
+    white-space: pre-line;
   }
 </style>
