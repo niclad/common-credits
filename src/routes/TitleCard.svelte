@@ -42,10 +42,13 @@
 
 		return releaseDate;
 	}
+
+	const placeholderImgUrl: string = 'https://via.placeholder.com/300x450?text=No+Image+Found';
+	const imgUrl: string = title.posterPath ? BASE_IMG_URL + title.posterPath : placeholderImgUrl;
 </script>
 
 <div class="card" transition:fade>
-	<img src={BASE_IMG_URL + title.posterPath} class="card-img-top" alt="title card" />
+	<img src={imgUrl} class="card-img-top" alt="title card" />
 	<div class="card-body">
 		<h5 class="card-title">
 			<a href={titleLink} class="stretched-link-off" target="_blank" rel="noopener noreferrer"
@@ -54,25 +57,25 @@
 		</h5>
 		<h5 class="card-title">({releaseDate})</h5>
 	</div>
-  <ul class="list-group list-group-flush">
-    <li class="list-group-item">
-      <div class="d-flex flex-row justify-content-between text-center">
-        <div class="p-2 user-select-none" style="font-weight: bold;" title="Title order">
-          {titleOrder + 1}
-        </div>
-        <div class="p-2 user-select-none" title="{title.type}">
-          {#if title.type === 'movie'}
-            &#x1F37F;
-          {:else}
-            &#x1F4FA;
-          {/if}
-        </div>
-        <div class="p-2 user-select-none" title="Rating">
-          <p class="card-text">{score}/{maxScore} &#x2b50</p>    
-        </div>
-      </div>
-    </li>
-  </ul>
+	<ul class="list-group list-group-flush">
+		<li class="list-group-item">
+			<div class="d-flex flex-row justify-content-between text-center">
+				<div class="p-2 user-select-none" style="font-weight: bold;" title="Title order">
+					{titleOrder + 1}
+				</div>
+				<div class="p-2 user-select-none" title={title.type}>
+					{#if title.type === 'movie'}
+						&#x1F37F;
+					{:else}
+						&#x1F4FA;
+					{/if}
+				</div>
+				<div class="p-2 user-select-none" title="Rating">
+					<p class="card-text">{score}/{maxScore} &#x2b50;</p>
+				</div>
+			</div>
+		</li>
+	</ul>
 </div>
 
 <style>
