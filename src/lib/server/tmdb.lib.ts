@@ -73,7 +73,7 @@ async function getAllMediaCredits(titles: QueryParams[]): Promise<CompositeMedia
     // roles for common credit members
     for (let i = 0; i < commonCast.length; i++) {
       const currCastMember = titleInfo.credits.cast.find((castMember) => castMember.id === commonCast[i].id);
-      
+
       if (!currCastMember) {
         delete commonCast[i]; // This will leave the element as undefined, so we'll filter it out later
         continue;
@@ -81,7 +81,7 @@ async function getAllMediaCredits(titles: QueryParams[]): Promise<CompositeMedia
 
       commonCast[i].characters[`${title.id}${titleType}`] = currCastMember.character;
     }
-    
+
     for (let i = 0; i < commonCrew.length; i++) {
       const currCrewMember = titleInfo.credits.crew.find((crewMember) => crewMember.id === commonCrew[i].id);
 
@@ -205,7 +205,14 @@ async function getTVCredits(id: number): Promise<{ details: Tv, credits: TvCredi
     }
   }
 
-  return { details: details, credits: credits };
+  return { 
+    details: details, 
+    credits: {
+      id: id,
+      cast: credits.cast,
+      crew: mergeDuplicates(credits.crew),
+   }
+ };
 }
 
 /**
@@ -241,7 +248,38 @@ async function getMovieCredits(id: number): Promise<{ details: Movie, credits: M
     voteAverage: response.data.vote_average,
   };
 
-  return { details: details, credits: response.data.credits };
+  // Merge duplicate members of the crew
+  const crew = response.data.credits.crew;
+
+  return {
+    details: details,
+    credits: {
+      id: id,
+      cast: response.data.credits.cast,
+      crew: mergeDuplicates(crew)
+    }
+  };
+}
+
+/**
+ * Merge members that appear more than once in a list of credits.
+ * Note: Currently only supports lists of crew members.
+ * @param members List of credits to merge duplicates from
+ * @returns List with only unique members
+ */
+function mergeDuplicates(crew: Crew[]): Crew[] {
+  const merged: Crew[] = [];
+
+  for (const crewMember of crew) {
+    const existing = merged.find((member) => member.id === crewMember.id);
+    if (existing) {
+      existing.job = `${existing.job}, ${crewMember.job}`;
+    } else {
+      merged.push(crewMember);
+    }
+  }
+
+  return merged;
 }
 
 export { getAllMediaCredits }

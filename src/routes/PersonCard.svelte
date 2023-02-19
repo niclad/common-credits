@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { BasicMedia, MediaCast, MediaCrew } from '$lib/media.d';
+	import type { BasicMedia, MediaCast, MediaCrew, Role } from '$lib/media.d';
 	import { instanceOfMediaCast } from '$lib/media.lib';
 	import { BASE_IMG_URL, BASE_TMDB_URL, SMALL_TMDB_LOGO_URL } from '$lib/tmdb.config';
 	import { fade } from 'svelte/transition';
@@ -43,22 +43,43 @@
 		}
 	}
 
-	function determineInfoDisplay(person: MediaCast | MediaCrew): string {
-		let displayedText = '';
-		if (instanceOfMediaCast(person)) {
-			for (const [key, value] of Object.entries(person.characters)) {
-				displayedText += `${key}: ${value}\n`;
-			}
+	function mergeSameJobs(person: MediaCrew): Role {
+		let jobs = person.jobs;
+		let jobsArrayMap: { [key: string]: string[] } = {};
+		const allJobs: string[] = [];
 
-			if (displayedText) return displayedText;
-		} else {
-			for (const [key, value] of Object.entries(person.jobs)) {
-				displayedText += `${key}: ${value}\n`;
-			}
-			if (displayedText) return displayedText;
+		// Split job strings into arrays
+		for (const [key, value] of Object.entries(person.jobs)) {
+			const joblist: string[] = value.split(',');
+			jobsArrayMap[key] = joblist.map((job) => job.trim());
+			allJobs.push(...jobsArrayMap[key]);
 		}
 
-		return '&#x1F614;';
+		// Extract duplicate jobs
+		const duplicateJobs = allJobs.filter((job, index) => allJobs.indexOf(job) !== index);
+
+		if (duplicateJobs.length === 0) return person.jobs;
+
+		// Remove duplicate jobs from their respective arrays
+		duplicateJobs.forEach((job) => {
+			for (const [key, value] of Object.entries(jobsArrayMap)) {
+				if (value.includes(job)) {
+					const newJobs = value.filter((item) => item !== job).join(', ');
+
+					if (newJobs) {
+						jobs[key] = newJobs;
+					} else {
+						delete jobs[key];
+					}
+				}
+			}
+		});
+
+		jobs['All'] = duplicateJobs.join(', ');
+
+		console.log(jobs);
+
+		return jobs;
 	}
 </script>
 
@@ -76,17 +97,17 @@
 		</div>
 	</div>
 	<div class="card-footer">
-		<div class="accordion accordion-flush" id="accordion-{person.id}">
+		<div class="accordion accordion-flush" id="accordion-{person.id}-{person.type}">
 			<div class="accordion-item rounded-bottom">
-				<h2 class="accordion-header" id="flush-heading-{person.id}">
+				<h2 class="accordion-header" id="flush-heading-{person.id}-{person.type}">
 					<button
 						class="accordion-button collapsed"
 						class:rounded-bottom={!infoOpen}
 						type="button"
 						data-bs-toggle="collapse"
-						data-bs-target="#flush-collapse-{person.id}"
+						data-bs-target="#flush-collapse-{person.id}-{person.type}"
 						aria-expanded="false"
-						aria-controls="flush-collapse-{person.id}"
+						aria-controls="flush-collapse-{person.id}-{person.type}"
 						on:click={() => (infoOpen = !infoOpen)}
 					>
 						{#if instanceOfMediaCast(person)}
@@ -97,10 +118,10 @@
 					</button>
 				</h2>
 				<div
-					id="flush-collapse-{person.id}"
+					id="flush-collapse-{person.id}-{person.type}"
 					class="accordion-collapse collapse"
-					aria-labelledby="flush-heading-{person.id}"
-					data-bs-parent="#accordion-{person.id}"
+					aria-labelledby="flush-heading-{person.id}-{person.type}"
+					data-bs-parent="#accordion-{person.id}-{person.type}"
 				>
 					<div class="accordion-body person-roles">
 						<table class="table table-hover table-sm">
@@ -113,10 +134,14 @@
 										</tr>
 									{/each}
 								{:else}
-									{#each Object.entries(person.jobs) as [key, value]}
+									{#each Object.entries(mergeSameJobs(person)) as [key, value]}
 										<tr>
-											<td class="title-num">{titleOrder[key]}</td>
-											<td>{value}</td>
+											{#if key.toLowerCase() === 'all'}
+												<td class="title-num user-select-none">All</td>
+											{:else}
+												<td class="title-num user-select-none">{titleOrder[key]}</td>
+											{/if}
+											<td class="user-select-none">{value}</td>
 										</tr>
 									{/each}
 								{/if}
@@ -152,7 +177,7 @@
 		padding: 0;
 	}
 
-  .title-num {
-    font-weight: bold;
-  }
+	.title-num {
+		font-weight: bold;
+	}
 </style>
