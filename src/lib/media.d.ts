@@ -1,3 +1,5 @@
+import type { BaseCredit } from "./tmdb.d";
+
 interface BaseMedia {
   posterPath: string;
   id: number;
@@ -14,23 +16,6 @@ interface Movie extends BaseMedia {
   // the life of me work out how to use this as a class... :(
   type: "movie"; 
 }
-// Take note! This is important!
-class MovieImpl implements Movie {
-  constructor(
-    public posterPath: string,
-    public id: number,
-    public name: string,
-    public releaseDate: string,
-    public voteAverage: number,
-  ) { 
-    this.type = "movie";
-    this.posterPath = posterPath;
-    this.id = id;
-    this.name = name;
-    this.releaseDate = releaseDate;
-    this.voteAverage = voteAverage;
-  }
-}
 
 /**
  * Minimum info needed for a tv show
@@ -41,36 +26,41 @@ interface Tv extends BaseMedia {
   inProduction: boolean;
 }
 
+/**
+ * Info related to a cast member's role in a TV show
+ */
+interface TvRole {
+  credit_id: string;
+  character: string;
+  episode_count: number;
+}
+
 // Union of all BaseMedia types
 type BasicMedia = Movie | Tv;
 
-/**
- * Common properties between a title's cast or crew members
- */
-interface Person {
-  id: number;
-  known_for_department: string;
-  name: string;
-  popularity: number;
-  profile_path: string | null;
+interface Role {
+  [id: number]: string;
 }
+// interface Role {
+//   id: number;       // ID of the title the role is associated with
+//   roles: string[];  // List of the role's names
+// }
 
 /**
  * A title's cast member
  */
-interface MediaCast extends Person {
+interface MediaCast extends BaseCredit {
   type: "cast";
-  character: string | string[];
+  characters: Role; // All the actor's characters
 }
 
 /**
  * A title's crew member
  */
-interface MediaCrew extends Person {
+interface MediaCrew extends BaseCredit {
   type: "crew";
-  original_name: string;
   department: string;
-  job: string | string[];
+  jobs: Role;
 }
 
 /**
@@ -100,20 +90,6 @@ interface QueryParams {
   id: number;
 }
 
-// Statuses for a BasicMedia's production
-enum Status {
-  announced = 'Announced',
-  cancelled = 'Cancelled' | 'Canceled',
-  ended = 'Ended',
-  inProduction = 'In Production',
-  pilot = 'Pilot',
-  planned = 'Planned',
-  postProduction = 'Post Production',
-  released = 'Released',
-  returningSeries = 'Returning Series',
-  rumored = 'Rumored',
-}
-
 export {
   BasicMedia,
   CompositeMedia,
@@ -122,7 +98,7 @@ export {
   MediaCrew,
   MediaType,
   Movie,
-  Status,
   Tv,
+  TvRole,
   QueryParams,
 }

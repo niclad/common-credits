@@ -32,6 +32,12 @@ interface MovieCredits {
   crew: Crew[];
 }
 
+interface TvCredits {
+  id: number;
+  cast: Cast[];
+  crew: Crew[];
+}
+
 interface EpisodeCredits {
   id: number;
   cast: Cast[];
@@ -39,13 +45,40 @@ interface EpisodeCredits {
   guest_stars: GuestStar[];
 }
 
+interface Season {
+  air_date: string;
+  episode_count: number;
+  id: number;
+  name: string;
+  overview: string;
+  poster_path: string | null;
+  season_number: number;
+}
+
+// Statuses for a production
+enum Status {
+  announced = 'Announced',
+  cancelled = 'Cancelled' | 'Canceled',
+  ended = 'Ended',
+  inProduction = 'In Production',
+  pilot = 'Pilot',
+  planned = 'Planned',
+  postProduction = 'Post Production',
+  released = 'Released',
+  returningSeries = 'Returning Series',
+  rumored = 'Rumored',
+}
+
 export {
+  BaseCredit,
   Cast,
   Crew,
   GuestStar,
   MovieCast,
   MovieCredits,
   EpisodeCredits,
+  Season,
+  TvCredits
 }
 
 /**
@@ -74,12 +107,4 @@ interface TvCrew extends BaseCredit {
   jobs: TvJob[];
   department: string;
   total_episode_count: number;
-}
-
-interface TvCredits {
-  // Note: Currently the TMDb aggregate credits endpoint fails
-  // to correctly return all credits for a TV show.
-  id: number;
-  cast: TvCast[];
-  crew: TvCrew[];
 }

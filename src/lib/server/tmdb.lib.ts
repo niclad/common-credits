@@ -1,177 +1,246 @@
-import * as Media from '$lib/media.d';
+import type { Cast, Crew, GuestStar, MovieCast, MovieCredits, EpisodeCredits, Season, TvCredits } from '$lib/tmdb.d';
+import { MediaType, type QueryParams, type Credits, type MediaCast, type Tv, type Movie, type BasicMedia, type MediaCrew, type CompositeMedia } from '$lib/media.d';
+import { BASE_TMDB_API_URL, TMDB_API_VERSION } from '$lib/tmdb.config';
 import { TMDB_API_KEY } from '$env/static/private';
 import axios from 'axios';
-import { instanceOfMediaCast } from '$lib/media.lib';
 import { error } from '@sveltejs/kit';
 
-async function getAllMediaCredits(titles: Media.QueryParams[]): Promise<Media.CompositeMedia> {
-  const apiBaseUrl = 'https://api.themoviedb.org';
-  const apiVer = '3';
-  let allTitles: Media.BasicMedia[] = [];
-  let commonCast: Media.MediaCast[] = [];
-  let commonCrew: Media.MediaCrew[] = [];
-  var castMap: Map<number, number> = new Map();
-  var crewMap: Map<number, number> = new Map();
+const API_BASE_URL = `${BASE_TMDB_API_URL}/${TMDB_API_VERSION}`;
 
-  // Loop through all the given titles
-  for (var i in titles) {
-    const title: Media.QueryParams = titles[i];
-    const mediaType = title.mediaType === Media.MediaType.Movie ? 'movie' : 'tv';
-    const queryParams: string = new URLSearchParams({ api_key: TMDB_API_KEY, language: 'en-US' }).toString();
-    const creditsUrl = `${apiBaseUrl}/${apiVer}/${mediaType}/${title.id}/credits?${queryParams}`;
+async function getAllMediaCredits(titles: QueryParams[]): Promise<CompositeMedia> {
+  let commonCast: MediaCast[] = [];
+  let commonCrew: MediaCrew[] = [];
+  let allTitles: BasicMedia[] = [];
 
-    // Get the credits for the current title
-    let response;
-    try {
-      response = await axios.get(creditsUrl);
-    } catch (err) {
-      throw error(404, `Media with ID ${title.id} could not be found for a ${mediaType}.`);
+  for (const title of titles) {
+    let titleInfo: { details: Tv | Movie, credits: MovieCredits | TvCredits };
+
+    // If given a movie, get the credits for that movie
+    if (title.mediaType === MediaType.Movie) {
+      titleInfo = await getMovieCredits(title.id);
+    } else if (title.mediaType === MediaType.TV) {
+      titleInfo = await getTVCredits(title.id);
+    } else {
+      throw error(400, `Invalid media type ${title.mediaType} for media with ID ${title.id}.`);
     }
-    const creditInfo: Media.Credits = response.data;
 
-    // Parse the cast
-    // const creditCast: Media.MediaCast[] = creditInfo.cast;
-    const creditCast: Media.MediaCast[] = Array.from(creditInfo.cast, (castMember): Media.MediaCast => {
-      return {
-        type: 'cast',
-        id: castMember.id,
-        known_for_department: castMember.known_for_department,
-        name: castMember.name,
-        popularity: castMember.popularity,
-        profile_path: castMember.profile_path,
-        character: castMember.character,
-      };
-    });
+    // Push the title details to the list of all titles
+    allTitles.push(titleInfo.details);
 
-    castMap = countOccurance(creditCast, castMap);
+    // If this is the first title, just set the common cast and crew to the credits for this title
+    if (commonCast.length === 0 && commonCrew.length === 0) {
+      commonCast = titleInfo.credits.cast.map((castMember): MediaCast => {
+        return {
+          type: 'cast',
+          adult: castMember.adult,
+          gender: castMember.gender,
+          id: castMember.id,
+          known_for_department: castMember.known_for_department,
+          name: castMember.name,
+          original_name: castMember.original_name,
+          popularity: castMember.popularity,
+          profile_path: castMember.profile_path,
+          credit_id: castMember.credit_id,
+          characters: {
+            [title.id]: castMember.character,
+          },
+        }
+      });
 
+      commonCrew = titleInfo.credits.crew.map((crewMember): MediaCrew => {
+        return {
+          type: 'crew',
+          adult: crewMember.adult,
+          gender: crewMember.gender,
+          id: crewMember.id,
+          known_for_department: crewMember.known_for_department,
+          name: crewMember.name,
+          original_name: crewMember.original_name,
+          popularity: crewMember.popularity,
+          profile_path: crewMember.profile_path,
+          credit_id: crewMember.credit_id,
+          department: crewMember.department,
+          jobs: {
+            [title.id]: crewMember.job,
+          },
+        }
+      });
+      continue;
+    }
 
-    // Parse the crew
-    // let creditCrew: Media.MediaCrew[] = creditInfo.crew;
-    let creditCrew: Media.MediaCrew[] = Array.from(creditInfo.crew, (crewMember): Media.MediaCrew => {
-      return {
-        type: 'crew',
-        id: crewMember.id,
-        known_for_department: crewMember.known_for_department,
-        name: crewMember.name,
-        popularity: crewMember.popularity,
-        profile_path: crewMember.profile_path,
-        original_name: crewMember.original_name,
-        department: crewMember.department,
-        job: crewMember.job,
-      };
-    });
+    // Otherwise, filter out the cast and crew that don't appear in all titles and append
+    // roles for common credit members
+    for (let i = 0; i < commonCast.length; i++) {
+      const currCastMember = titleInfo.credits.cast.find((castMember) => castMember.id === commonCast[i].id);
+      
+      if (!currCastMember) {
+        delete commonCast[i]; // This will leave the element as undefined, so we'll filter it out later
+        continue;
+      }
 
-    // This will merge duplicates on the same title
-    // i.e. so we don't have multiple entries for the same person on the same title
-    creditCrew = mergeDuplicates(creditCrew);
-    crewMap = countOccurance(creditCrew, crewMap); // Update thhe occurance count
+      commonCast[i].characters[title.id] = currCastMember.character;
+    }
+    
+    for (let i = 0; i < commonCrew.length; i++) {
+      const currCrewMember = titleInfo.credits.crew.find((crewMember) => crewMember.id === commonCrew[i].id);
 
-    // Remove singular entries
-    // ... For cast
-    commonCast = creditCast.filter((castMember) => multiOccurance(castMember, castMap));
+      if (!currCrewMember) {
+        delete commonCrew[i]; // This will leave the element as undefined, so we'll filter it out later
+        continue;
+      }
 
-    // ... For crew
-    commonCrew = creditCrew.filter((crewMember) => multiOccurance(crewMember, crewMap));
-
-    // Get the title details
-    const detailsUrl = `${apiBaseUrl}/${apiVer}/${mediaType}/${creditInfo.id}?${queryParams}`;
-    response = await axios.get(detailsUrl);
-    const titleDetails = response.data;
-
-    // Create the title object
-    const titleInfo: Media.BasicMedia = {
-      type: mediaType,
-      posterPath: titleDetails.poster_path,
-      id: titleDetails.id,
-      name: Media.MediaType.Movie === title.mediaType ? titleDetails.original_title : titleDetails.name,
-      releaseDate: Media.MediaType.Movie === title.mediaType ? titleDetails.release_date : titleDetails.first_air_date,
-      lastAirDate: Media.MediaType.Movie === title.mediaType ? undefined : titleDetails.last_air_date,	// Movies don't have an end date
-      inProduction: Media.MediaType.Movie === title.mediaType ? undefined : titleDetails.in_production,	// Movies don't have an in production status
-      voteAverage: titleDetails.vote_average,
-    };
-
-
-    allTitles.push(titleInfo);
+      commonCrew[i].jobs[title.id] = currCrewMember.job;
+    }
   }
 
-  const allInfo: Media.CompositeMedia = {
-    titles: allTitles,
+  // Filter empty elements out of the common cast and crew arrays
+  commonCast = commonCast.filter((member) => member !== undefined);
+  commonCrew = commonCrew.filter((member) => member !== undefined);
+
+  return {
     cast: commonCast,
     crew: commonCrew,
+    titles: allTitles,
+  };
+}
+
+async function getTVCredits(id: number): Promise<{ details: Tv, credits: TvCredits }> {
+  // This will need to get ALL the credits for a TV show, on an epidode-by-episode basis...
+  // Get the list of all episodes for the given TV show
+  const tvDetailsUrl = `${API_BASE_URL}/tv/${id}`;
+  let response;
+  try {
+    response = await axios.get(tvDetailsUrl, {
+      params: {
+        api_key: TMDB_API_KEY,
+        language: 'en-US',
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    throw error(404, `TV show with ID ${id} could not be found.`);
+  }
+
+  const seasons = response.data?.seasons as Season[];
+  if (!seasons) {
+    throw error(404, `No seasons found for TV show with ID ${id}.`);
+  }
+
+  const details: Tv = {
+    type: 'tv',
+    id: id,
+    name: response.data.name,
+    posterPath: response.data.poster_path,
+    releaseDate: response.data.first_air_date,
+    lastAirDate: response.data.last_air_date,
+    inProduction: response.data.in_production,
+    voteAverage: response.data.vote_average,
   };
 
-  return allInfo;
-}
+  let credits: TvCredits = {
+    id: id,
+    cast: [],
+    crew: [],
+  };
 
-/**
- * Update the occurance of credit member's occurances in a title's credits
- * @param creditList The Array of credits to count members' occurance
- * @param creditMap The Map to save and update counts in
- * @returns The updated Map
- */
-function countOccurance(creditList: Media.MediaCast[] | Media.MediaCrew[], creditMap: Map<number, number>): Map<number, number> {
-  for (const member of creditList) {
-    // Attempt to get a credits member. If there's no entry, will be undefined.
-    let count = creditMap.get(member.id) ?? 0;
-    count++;
+  // Loop through all seasons getting the credits for each episode
+  for (const season of seasons) {
+    if (season.season_number === 0) continue; // Skip "specials" seasons
 
-    // Update the value
-    creditMap.set(member.id, count);
-  }
+    const sznCreditsUrl = `${API_BASE_URL}/tv/${id}/season/${season.season_number}`;
+    let response;
+    try {
+      response = await axios.get(sznCreditsUrl, {
+        params: {
+          api_key: TMDB_API_KEY,
+          append_to_response: 'credits',
+          language: 'en-US',
+        }
+      });
+    } catch (err) {
+      throw error(404, `Season ${season.season_number} of TV show with ID ${id} could not be found.`);
+    }
 
-  return creditMap;
-}
+    // Get the primary credits for the season
+    // Note: "primary" here means the actor is credited for every episode in the season
+    //       i.e. not a guest star
+    const primaryCredits = response.data?.credits;
+    if (!primaryCredits) {
+      throw error(404, `No credits found for season ${season.season_number} of TV show with ID ${id}.`);
+    }
 
-/**
- * Determine if a creditMember occurs multiple times
- * @param creditMember Member of the credits to check
- * @param creditMap The Map holding the counts of credit members
- * @returns A boolean as true if the given credit member occurs more than once, otherwise false
- */
-function multiOccurance(creditMember: Media.MediaCast | Media.MediaCrew, creditMap: Map<number, number>): boolean {
-  const count = creditMap.get(creditMember.id) ?? 0;
-  if (count > 1) {
-    return true;
-  }
-  return false;
-}
+    // Get the list of episodes for the given season
+    const episodes = response.data?.episodes;
+    if (!episodes) {
+      throw error(404, `No episodes found for season ${season.season_number} of TV show with ID ${id}.`);
+    }
 
-/**
- * Merge duplicate crew members with multiple jobs
- * @param creditList The list of credits to merge (currently only supports crew)
- * @returns Returns the merged list of credit members
- */
-function mergeDuplicates(creditList: Media.MediaCrew[]): Media.MediaCrew[] {
-  const mergedCrew: Media.MediaCrew[] = [];
+    // Loop through the primary credits, adding them to the TV show's credits...
+    // Get the primary cast and add it to the TV show's cast
+    for (const castMember of primaryCredits.cast) {
+      if (credits.cast.some((member) => member.credit_id === castMember.credit_id)) continue;
+      credits.cast.push(castMember);
+    }
 
-  for (const crewMember of creditList) {
-    // Check if the crew member already exists
-    const existingMember = mergedCrew.find((member: Media.MediaCrew | Media.MediaCast) => member.id === crewMember.id);
+    // Get the primary crew and add it to the TV show's crew
+    for (const crewMember of primaryCredits.crew) {
+      if (credits.crew.some((member) => member.credit_id === crewMember.credit_id)) continue;
+      credits.crew.push(crewMember);
+    }
 
-    // If it does, merge the jobs
-    if (existingMember) {
-      // Check if the existing member has multiple jobs
-      if (Array.isArray(existingMember.job) && !Array.isArray(crewMember.job)) {
-        existingMember.job.push(crewMember.job);
-      } else if (!Array.isArray(existingMember.job) && !Array.isArray(crewMember.job)) {
-        // If the existing member has a single job, and the new member has a single job, create an array
-        existingMember.job = [existingMember.job, crewMember.job];
-      } else {
-        // Otherwise, throw an error
-        throw new Error('A crew member has a an unexpected number of jobs: ' + existingMember.id + ', ' + existingMember.job);
+    // Loop through the episodes getting the credits for each episode
+    for (const episode of episodes) {
+      // Get the episode's cast
+      for (const castMember of episode.guest_stars) {
+        if (credits.cast.some((member) => member.credit_id === castMember.credit_id)) continue;
+        credits.cast.push(castMember);
       }
-    } else {
-      // Otherwise, add the crew member to the list
-      mergedCrew.push(crewMember);
+
+      // Get the episode's crew
+      for (const crewMember of episode.crew) {
+        if (credits.crew.some((member) => member.credit_id === crewMember.credit_id)) continue;
+        credits.crew.push(crewMember);
+      }
     }
   }
 
-  return mergedCrew;
-
-  // Side note: GitHub Copilot is scary good!
+  return { details: details, credits: credits };
 }
 
-export {
-  getAllMediaCredits,
+/**
+ * Get a movie's cast and crew from TMDb.
+ * @param id The ID of the movie to get credits for
+ * @returns The credits for the movie with the given ID
+ */
+async function getMovieCredits(id: number): Promise<{ details: Movie, credits: MovieCredits }> {
+  const url = `${API_BASE_URL}/movie/${id}`; // ?api_key=${TMDB_API_KEY}&language=en-US`;
+
+  let response;
+  try {
+    // Attempt to get a movie's credits
+    response = await axios.get(url, {
+      params: {
+        api_key: TMDB_API_KEY,
+        append_to_response: 'credits',
+        language: 'en-US',
+      }
+    });
+  } catch (err) {
+    // Otherwise, throw an error
+    console.error(err);
+    throw error(404, `Credits for movie with ID ${id} could not be found.`);
+  }
+
+  const details: Movie = {
+    type: 'movie',
+    id: id,
+    name: response.data.title,
+    posterPath: response.data.poster_path,
+    releaseDate: response.data.release_date,
+    voteAverage: response.data.vote_average,
+  };
+
+  return { details: details, credits: response.data.credits };
 }
+
+export { getAllMediaCredits }
