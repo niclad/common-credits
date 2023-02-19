@@ -6,5 +6,9 @@
 	"Twitter": {
 		"link": "https://twitter.com/Tender_Nick",
 		"icon": "bi bi-twitter"
+	},
+	"Mastodib": {
+		"link": "https://mastodon.social/@tender_nick",
+		"icon": "bi bi-mastodon"
 	}
 }

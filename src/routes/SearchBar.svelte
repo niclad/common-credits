@@ -65,7 +65,7 @@
 				}
 			},
 			(error) => {
-				errorMessage = error.response.data.message;
+				errorMessage = error.response?.data.message ?? 'An unknown error occurred.';
 				console.log(errorMessage);
 			}
 		);

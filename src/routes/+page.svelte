@@ -23,9 +23,9 @@
 <!-- Display the medias' data if it's available -->
 {#if mediaData}
   <div class="accordion py-5" transition:slide>
-    <AccordionItem accordionId={0} accordionTitle={'Titles'} isExpanded={true} data={mediaData.titles} />
-    <AccordionItem accordionId={1} accordionTitle={'Cast'} data={mediaData.cast}/>
-    <AccordionItem accordionId={2} accordionTitle={'Crew'} data={mediaData.crew}/>
+    <AccordionItem accordionId={0} accordionTitle={'Titles'} isExpanded={true} data={mediaData.titles} titleOrder={[]} />
+    <AccordionItem accordionId={1} accordionTitle={'Cast'} data={mediaData.cast} titleOrder={mediaData.titles} />
+    <AccordionItem accordionId={2} accordionTitle={'Crew'} data={mediaData.crew} titleOrder={mediaData.titles}/>
   </div>
 {/if}
 
