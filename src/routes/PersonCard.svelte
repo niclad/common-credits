@@ -9,7 +9,7 @@
 
 	export let titles: BasicMedia[] = [];
 
-	const titleOrder: { [key: string]: string } = Object.fromEntries(
+	$: titleOrder = Object.fromEntries(
 		Array.from(titles, (title, index) => [`${title.id}${title.type}`, (++index).toString()])
 	);
 
@@ -76,8 +76,6 @@
 		});
 
 		jobs['All'] = duplicateJobs.join(', ');
-
-		console.log(jobs);
 
 		return jobs;
 	}

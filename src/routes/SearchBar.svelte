@@ -36,8 +36,10 @@
 
 		// Check if it's being tested
 		if (selectedMedia.includes(undefined) || enteredId.includes(undefined)) {
-			selectedMedia = ['0', '0'];
-			enteredId = ['9718', '12133'];
+			// selectedMedia = ['0', '0'];
+			// enteredId = ['9718', '12133'];
+			selectedMedia = ['1', '1'];
+			enteredId = ['1399', '100088'];
 		}
 
 		// Build the search parameters
