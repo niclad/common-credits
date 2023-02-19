@@ -9,6 +9,7 @@
 	export let isExpanded = false;
 
 	export let data: BasicMedia[] | MediaCast[] | MediaCrew[];
+	export let titleOrder: BasicMedia[] = [];
 </script>
 
 <div class="accordion-item">
@@ -33,13 +34,13 @@
 	>
 		<div class="accordion-body">
 			<div class="row row-cols-6 g-2">
-				{#each data as mediaItem}
+				{#each data as mediaItem, i}
 					<div class="col">
 						<div class="p-2">
 							{#if instanceOfBasicMedia(mediaItem)}
-								<TitleCard title={mediaItem} />
+								<TitleCard title={mediaItem} titleOrder={i} />
 							{:else}
-                <PersonCard person={mediaItem} />
+                <PersonCard person={mediaItem} titles={titleOrder} />
               {/if}
 						</div>
 					</div>
