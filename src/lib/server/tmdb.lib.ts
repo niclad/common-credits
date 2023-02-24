@@ -7,6 +7,11 @@ import { error } from '@sveltejs/kit';
 
 const API_BASE_URL = `${BASE_TMDB_API_URL}/${TMDB_API_VERSION}`;
 
+/**
+ * Get the list of credits that appear in ALL of the given titles
+ * @param titles List of titles to get credits for
+ * @returns A list of all cast and crew members that appear in all titles, with their roles in each title
+ */
 async function getAllMediaCredits(titles: QueryParams[]): Promise<CompositeMedia> {
   let commonCast: MediaCast[] = [];
   let commonCrew: MediaCrew[] = [];
@@ -105,6 +110,11 @@ async function getAllMediaCredits(titles: QueryParams[]): Promise<CompositeMedia
   };
 }
 
+/**
+ * Get the full credits for a TV show
+ * @param id ID of a TV show to get the credits for
+ * @returns The details of the TV show and the credits for the show
+ */
 async function getTVCredits(id: number): Promise<{ details: Tv, credits: TvCredits }> {
   // This will need to get ALL the credits for a TV show, on an epidode-by-episode basis...
   // Get the list of all episodes for the given TV show
@@ -205,14 +215,14 @@ async function getTVCredits(id: number): Promise<{ details: Tv, credits: TvCredi
     }
   }
 
-  return { 
-    details: details, 
+  return {
+    details: details,
     credits: {
       id: id,
       cast: credits.cast,
       crew: mergeDuplicates(credits.crew),
-   }
- };
+    }
+  };
 }
 
 /**
@@ -282,4 +292,29 @@ function mergeDuplicates(crew: Crew[]): Crew[] {
   return merged;
 }
 
-export { getAllMediaCredits }
+function searchTMDb(search: string): Promise<any[]> {
+  const url = `${API_BASE_URL}/search/multi`;
+
+  return axios.get(url, {
+    params: {
+      api_key: TMDB_API_KEY,
+      query: search,
+      language: 'en-US',
+    }
+  })
+    .then((response) => {
+      const results = response.data.results as any[];
+      return results.filter(
+        (result) => { return result.media_type === 'movie' || result.media_type === 'tv'; }
+      );
+    })
+    .catch((err) => {
+      console.error(err);
+      throw error(404, `No results found for "${search}".`);
+    });
+}
+
+export { 
+  getAllMediaCredits, 
+  searchTMDb 
+}
