@@ -1,9 +1,92 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import axios from 'axios';
 	import { fade } from 'svelte/transition';
-	import { page } from '$app/stores';
-	import type { QueryParams } from '$lib/media';
+	import { slide } from 'svelte/transition';
+	import SearchResult from './SearchResult.svelte';
+	import SelectedResult from './SelectedResult.svelte';
 	import { hexEncode, hexDecode } from '$lib/utils';
+	import { type QueryParams, MediaType } from '$lib/media.d';
+
+	let searchValue: string;
+	let hasResults: boolean = false;
+
+	const goBtnText = 'Go';
+
+	type mediaEnum = 'movie' | 'tv';
+	interface SearchInfo {
+		type: mediaEnum;
+		id: number;
+		title: string;
+		releaseYear: string;
+		selected: boolean;
+	}
+
+	let searchResults: any[] = [];
+	let numResults: number = 0;
+	let selectedResults: any[] = [];
+
+	/**
+	 * Get search results from TMDb based on entered search value
+	 */
+	function search() {
+		if (searchValue?.trim()) hasResults = true;
+		else hasResults = false;
+
+		const url: string = `/api/search`;
+		axios
+			.get(url, {
+				params: {
+					q: searchValue,
+					debug: false
+				}
+			})
+			.then(
+				(response) => {
+					if (Array.isArray(response.data)) {
+						searchResults = response.data.map((item: any) => {
+							return {
+								...item,
+								selected: false
+							};
+						});
+					} else if (
+						Object.hasOwn(response.data, 'results') &&
+						Object.hasOwn(response.data, 'total_results')
+					) {
+						searchResults = response.data.results.map((item: any) => {
+							return {
+								...item,
+								selected: false
+							};
+						});
+						numResults = response.data.total_results;
+					} else {
+						searchResults = [];
+						numResults = 0;
+					}
+				},
+				(error) => {
+					console.error(error);
+				}
+			);
+	}
+
+	function displayInfo(searchItem: any): SearchInfo {
+		const year: string = Object.hasOwn(searchItem, 'release_date')
+			? searchItem.release_date.slice(0, 4)
+			: searchItem.first_air_date.slice(0, 4);
+
+		const title: string = Object.hasOwn(searchItem, 'title') ? searchItem.title : searchItem.name;
+
+		return {
+			type: searchItem.media_type,
+			id: searchItem.id,
+			title: title,
+			releaseYear: year,
+			selected: searchItem.selected
+		};
+	}
 
 	// The requested media data
 	export let mediaData;
@@ -11,22 +94,8 @@
 	// Whether the 'Go' button has been clicked
 	export let isSubmitted = false;
 
-	// Search bar settings
-	const numSearchBars = 2;
-	const idPlaceholder = 'Movie or TV show ID...';
-	const goBtnText = 'Go';
-
-	// Acceptable media types
-	const mediaTypes = [
-		{ label: 'Movie', value: '0' },
-		{ label: 'TV Show', value: '1' }
-	];
-
-	// Entered values
-	let selectedMedia = Array(numSearchBars);
-	let enteredId = Array(numSearchBars);
-	
 	let errorMessage: string;
+	let selectedMedia: QueryParams[] = [];
 
 	/**
 	 * Get the media info from the API
@@ -35,20 +104,29 @@
 		isSubmitted = true;
 
 		// Check if it's being tested
-		if (selectedMedia.includes(undefined) || enteredId.includes(undefined)) {
-			// selectedMedia = ['0', '0'];
-			// enteredId = ['9718', '12133'];
-			selectedMedia = ['1', '1'];
-			enteredId = ['1399', '100088'];
+		if (selectedResults.length < 2) {
+			// Movies
+			// selectedMedia.push({ type: '0', id: 9718 }); // Taladega Knights
+			// selectedMedia.push({ type: '0', id: 12133 }); // Step Brothers
+
+			// TV Shows
+			selectedMedia.push({ mediaType: MediaType.TV, id: 1399 }); // Game of Thrones
+			selectedMedia.push({ mediaType: MediaType.TV, id: 100088 }); // The Last of Us
+		} else {
+			// Push selected results into query array
+			for (const result of selectedResults) {
+				selectedMedia.push({
+					mediaType: result.type === 'movie' ? MediaType.Movie : MediaType.TV,
+					id: result.id
+				});
+			}
 		}
 
 		// Build the search parameters
 		let searchParams = [];
-		for (const id of enteredId) {
-			searchParams.push(['id', id]);
-		}
-		for (const mediaType of selectedMedia) {
-			searchParams.push(['type', mediaType]);
+		for (const mediaQuery of selectedMedia) {
+			searchParams.push(['id', mediaQuery.id.toString()]);
+			searchParams.push(['type', mediaQuery.mediaType.toString()]);
 		}
 		const queryParams = new URLSearchParams(searchParams).toString();
 
@@ -65,6 +143,10 @@
 				if (errorMessage) {
 					errorMessage = '';
 				}
+
+				// Clear the search and selected results
+				searchResults = [];
+				selectedResults = [];
 			},
 			(error) => {
 				errorMessage = error.response?.data.message ?? 'An unknown error occurred.';
@@ -79,8 +161,10 @@
 	if (query) {
 		const decodedQuery = JSON.parse(hexDecode(query)) as QueryParams[];
 		for (const [i, query] of decodedQuery.entries()) {
-			selectedMedia[i] = query.mediaType;
-			enteredId[i] = query.id;
+			selectedMedia.push({
+				mediaType: query.mediaType,
+				id: query.id
+			});
 		}
 		getMediaInfo();
 	}
@@ -90,17 +174,17 @@
 	 */
 	function buildEncodedLink(): string {
 		const defaultUrl = $page.url.origin;
-		if (selectedMedia.includes(undefined) || enteredId.includes(undefined)) {
+		if (selectedMedia.length < 2) {
 			return defaultUrl;
 		}
 
 		// Push QueryParams into an array
 		let queryArray: QueryParams[] = [];
-		for (const [i, id] of enteredId.entries()) {
-			if (id) {
+		for (const query of selectedMedia) {
+			if (query.id) {
 				queryArray.push({
-					id: id,
-					mediaType: selectedMedia[i]
+					id: query.id,
+					mediaType: query.mediaType
 				});
 			} else {
 				// Shouldn't get here!
@@ -155,38 +239,87 @@
 	}
 </script>
 
-<!-- Search bars -->
-<form>
-	{#each Array(numSearchBars) as _, i}
-		<div class="input-group mb-3">
-			{#each mediaTypes as mediaType, index}
-				<input
-					type="radio"
-					class="btn-check"
-					name="btnradio{i}"
-					id="{mediaType.value}-btnradio{i}"
-					value={mediaType.value}
-					bind:group={selectedMedia[i]}
-					autocomplete="off"
-					required
-				/>
-				<label
-					class:first-radio={index === 0}
-					class="btn btn-outline-secondary"
-					for="{mediaType.value}-btnradio{i}">{mediaType.label}</label
-				>
-			{/each}
-			<input
-				bind:value={enteredId[i]}
-				type="text"
-				class="form-control id-entry"
-				placeholder={idPlaceholder}
-				aria-label=""
-				required
+<!-- Search bar and button -->
+<div class="input-group" class:mb-3={!hasResults}>
+	<input
+		type="text"
+		class="form-control"
+		placeholder="Search for a title..."
+		aria-label="Movie or TV show title"
+		aria-describedby="search-button"
+		class:rounded-0={hasResults}
+		class:rounded-top={hasResults}
+		bind:value={searchValue}
+		on:keyup={(event) => {
+			const disallowedKeys = ['Tab', 'Backspace'];
+			if (!disallowedKeys.includes(event.key) && false) search();
+		}}
+	/>
+	<button
+		class="btn btn-success"
+		type="button"
+		id="search-button"
+		class:rounded-0={hasResults}
+		class:rounded-top={hasResults}
+		disabled={!searchValue}
+		on:click={search}><i class="bi bi-search" /></button
+	>
+</div>
+
+<!-- Search results list -->
+{#if hasResults}
+	<div class="list-group mb-3 rounded-0" class:rounded-bottom={hasResults} transition:slide>
+		{#each searchResults.filter((t) => !t.selected) as result}
+			<SearchResult
+				searchInfo={displayInfo(result)}
+				on:click={() => {
+					result.selected = !result.selected;
+					if (
+						selectedResults.findIndex(
+							(t) => t.id === result.id && t.media_type === result.media_type
+						) === -1
+					) {
+						selectedResults = [...selectedResults, result];
+					}
+				}}
 			/>
-		</div>
-	{/each}
-</form>
+		{/each}
+		{#if numResults > 0}
+			<span
+				class="list-group-item list-group-item-action list-group-item-light pe-none user-select-none"
+			>
+				<i class="bi bi-info-circle" />
+				<span class="fst-italic"
+					>Showing {searchResults.reduce((acc, curr) => {
+						if (!curr.selected) acc++;
+						return acc;
+					}, 0)} of {numResults} total results</span
+				>
+			</span>
+		{/if}
+	</div>
+{/if}
+
+<!-- Selected results list -->
+{#if selectedResults.filter((t) => t.selected).length > 0}
+	<div class="list-group mb-3" class:rounded-bottom={hasResults} transition:slide>
+		<h6 class="list-group-item fw-bold pe-none mb-0">Selected Titles</h6>
+		{#each selectedResults.filter((t) => t.selected) as result}
+			<SelectedResult
+				searchInfo={displayInfo(result)}
+				on:click={() => {
+					result.selected = !result.selected;
+					selectedResults = selectedResults.filter((t) => t.selected);
+
+					const updateIdx = searchResults.findIndex(
+						(t) => t.id === result.id && t.media_type === result.media_type
+					);
+					searchResults[updateIdx] = result;
+				}}
+			/>
+		{/each}
+	</div>
+{/if}
 
 <div class="d-flex justify-content-center align-items-center">
 	<!-- Go button -->
@@ -198,8 +331,7 @@
 			getMediaInfo();
 			copyLink = buildEncodedLink();
 		}}
-		disabled={(selectedMedia.includes(undefined) || enteredId.includes(undefined)) && false}
-		>{goBtnText}</button
+		disabled={selectedMedia.length < 2 && false}>{goBtnText}</button
 	>
 	<!-- Share button -->
 	<div class="dropdown">
@@ -258,19 +390,4 @@
 {/if}
 
 <style>
-	.first-radio {
-		border-radius: 0.375rem 0 0 0.375rem !important;
-	}
-
-	.share-menu {
-		max-width: 400px;
-	}
-
-	.link-box {
-		padding: 0.6rem;
-	}
-
-	.id-entry {
-		font-family: monospace;
-	}
 </style>

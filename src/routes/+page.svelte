@@ -3,7 +3,6 @@
   import SearchBar from './SearchBar.svelte';
   import type { CompositeMedia } from '$lib/media.d';
   import { slide } from 'svelte/transition';
-	import SearchTest from './SearchTest.svelte';
 
   let mediaData: CompositeMedia;
 
@@ -17,9 +16,7 @@
   };
 </script>
 
-<h1 class="title-logo text-center">Common Credits</h1>
-
-<SearchTest />
+<h1 class="title-logo text-center mt-3">Common Credits</h1>
 
 <SearchBar bind:mediaData />
 
