@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import axios from 'axios';
-	import { fade } from 'svelte/transition';
-	import { slide } from 'svelte/transition';
+	import { fade, slide } from 'svelte/transition';
 	import SearchResult from './SearchResult.svelte';
-	import SelectedResult from './SelectedResult.svelte';
 	import { hexEncode, hexDecode } from '$lib/utils';
 	import { type QueryParams, MediaType } from '$lib/media.d';
 
@@ -25,20 +23,21 @@
 	let searchResults: any[] = [];
 	let numResults: number = 0;
 	let selectedResults: any[] = [];
+	
+	function updateHasResults() {
+		if (searchValue?.trim()) hasResults = true;
+		else hasResults = false;
+	}
 
 	/**
 	 * Get search results from TMDb based on entered search value
 	 */
 	function search() {
-		if (searchValue?.trim()) hasResults = true;
-		else hasResults = false;
-
 		const url: string = `/api/search`;
 		axios
 			.get(url, {
 				params: {
-					q: searchValue,
-					debug: false
+					q: searchValue
 				}
 			})
 			.then(
@@ -50,6 +49,7 @@
 								selected: false
 							};
 						});
+						updateHasResults();
 					} else if (
 						Object.hasOwn(response.data, 'results') &&
 						Object.hasOwn(response.data, 'total_results')
@@ -61,9 +61,11 @@
 							};
 						});
 						numResults = response.data.total_results;
+						updateHasResults();
 					} else {
 						searchResults = [];
 						numResults = 0;
+						updateHasResults();
 					}
 				},
 				(error) => {
@@ -102,6 +104,7 @@
 	 */
 	async function getMediaInfo() {
 		isSubmitted = true;
+		selectedMedia = []; // Reset the selected media array
 
 		// Check if it's being tested
 		if (selectedResults.length < 2) {
@@ -116,7 +119,7 @@
 			// Push selected results into query array
 			for (const result of selectedResults) {
 				selectedMedia.push({
-					mediaType: result.type === 'movie' ? MediaType.Movie : MediaType.TV,
+					mediaType: result.media_type === 'movie' ? MediaType.Movie : MediaType.TV,
 					id: result.id
 				});
 			}
@@ -146,7 +149,8 @@
 
 				// Clear the search and selected results
 				searchResults = [];
-				selectedResults = [];
+				hasResults = false;
+				searchValue = '';
 			},
 			(error) => {
 				errorMessage = error.response?.data.message ?? 'An unknown error occurred.';
@@ -248,7 +252,7 @@
 		aria-label="Movie or TV show title"
 		aria-describedby="search-button"
 		class:rounded-0={hasResults}
-		class:rounded-top={hasResults}
+		class:custom-rounded-input={hasResults}
 		bind:value={searchValue}
 		on:keyup={(event) => {
 			const disallowedKeys = ['Tab', 'Backspace'];
@@ -260,17 +264,18 @@
 		type="button"
 		id="search-button"
 		class:rounded-0={hasResults}
-		class:rounded-top={hasResults}
+		class:custom-rounded-btn={hasResults}
 		disabled={!searchValue}
 		on:click={search}><i class="bi bi-search" /></button
 	>
 </div>
 
 <!-- Search results list -->
-{#if hasResults}
+{#if hasResults && searchResults.length > 0}
 	<div class="list-group mb-3 rounded-0" class:rounded-bottom={hasResults} transition:slide>
-		{#each searchResults.filter((t) => !t.selected) as result}
+		{#each searchResults.filter((t) => !t.selected) as result, i}
 			<SearchResult
+				isFirst={i === 0}
 				searchInfo={displayInfo(result)}
 				on:click={() => {
 					result.selected = !result.selected;
@@ -298,6 +303,17 @@
 			</span>
 		{/if}
 	</div>
+{:else if hasResults && searchResults.length === 0}
+<div class="list-group mb-3 rounded-0" class:rounded-bottom={hasResults} transition:slide>
+	<span
+				class="list-group-item list-group-item-warning user-select-none"
+			>
+			<i class="bi bi-exclamation-circle-fill"></i>
+				<span
+					> No results for your current query. Double check what you entered and try again.</span
+				>
+			</span>
+</div>
 {/if}
 
 <!-- Selected results list -->
@@ -305,7 +321,8 @@
 	<div class="list-group mb-3" class:rounded-bottom={hasResults} transition:slide>
 		<h6 class="list-group-item fw-bold pe-none mb-0">Selected Titles</h6>
 		{#each selectedResults.filter((t) => t.selected) as result}
-			<SelectedResult
+			<SearchResult
+				mode={'select'}
 				searchInfo={displayInfo(result)}
 				on:click={() => {
 					result.selected = !result.selected;
@@ -331,7 +348,7 @@
 			getMediaInfo();
 			copyLink = buildEncodedLink();
 		}}
-		disabled={selectedMedia.length < 2 && false}>{goBtnText}</button
+		disabled={selectedResults.length < 2 && false}>{goBtnText}</button
 	>
 	<!-- Share button -->
 	<div class="dropdown">
@@ -390,4 +407,12 @@
 {/if}
 
 <style>
+	/* Override Bootstraps border radius settings */
+	.custom-rounded-input {
+		border-top-left-radius: 0.375rem !important;
+	}
+
+	.custom-rounded-btn {
+		border-top-right-radius: 0.375rem !important;
+	}
 </style>

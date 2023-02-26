@@ -11,7 +11,7 @@ export const GET = (async ({ url }) => {
   const debugMode = url.searchParams.get('debug');
   if (!search) throw error(400, 'Missing search query');
 
-  if ((SEARCH_DEBUG || (debugMode && debugMode === 'true')) && false) {
+  if (SEARCH_DEBUG) {
     const searchTestResult = searchTest();
     return json(searchTestResult);
   } else {

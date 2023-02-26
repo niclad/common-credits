@@ -77,7 +77,7 @@ async function getAllMediaCredits(titles: QueryParams[]): Promise<CompositeMedia
     // Otherwise, filter out the cast and crew that don't appear in all titles and append
     // roles for common credit members
     for (let i = 0; i < commonCast.length; i++) {
-      const currCastMember = titleInfo.credits.cast.find((castMember) => castMember.id === commonCast[i].id);
+      const currCastMember = titleInfo.credits.cast.find((castMember) => castMember.id === commonCast[i]?.id);
 
       if (!currCastMember) {
         delete commonCast[i]; // This will leave the element as undefined, so we'll filter it out later
@@ -88,7 +88,7 @@ async function getAllMediaCredits(titles: QueryParams[]): Promise<CompositeMedia
     }
 
     for (let i = 0; i < commonCrew.length; i++) {
-      const currCrewMember = titleInfo.credits.crew.find((crewMember) => crewMember.id === commonCrew[i].id);
+      const currCrewMember = titleInfo.credits.crew.find((crewMember) => crewMember.id === commonCrew[i]?.id);
 
       if (!currCrewMember) {
         delete commonCrew[i]; // This will leave the element as undefined, so we'll filter it out later
