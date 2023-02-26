@@ -1,0 +1,506 @@
+{
+  "page": 1,
+  "results": [
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "id": 13169,
+      "name": "Bob",
+      "original_language": "en",
+      "original_name": "Bob",
+      "overview": "Bob is an American television situation comedy which ran on CBS from September 18, 1992 until December 27, 1993. It was the third sitcom starring vehicle for Bob Newhart, and proved to be far less successful than The Bob Newhart Show and Newhart, his previous outings with the network. Bill Steinkellner, Cheri Steinkellner and Phoef Sutton comprised the creative writing team behind the show. The series was produced by Paramount Television. All 33 episodes became available on DVD April 3, 2012.",
+      "poster_path": "/4VRRFEzwNiLefJJzml8ROGuMXuk.jpg",
+      "media_type": "tv",
+      "genre_ids": [
+        35
+      ],
+      "popularity": 2.663,
+      "first_air_date": "1992-09-18",
+      "vote_average": 7.7,
+      "vote_count": 3,
+      "origin_country": [
+        "US"
+      ]
+    },
+    {
+      "adult": true,
+      "backdrop_path": null,
+      "id": 32726,
+      "title": "Bob's Bangers",
+      "original_language": "en",
+      "original_title": "Bob's Bangers",
+      "overview": "People get railed in the back of a restaurant.",
+      "poster_path": null,
+      "media_type": "movie",
+      "genre_ids": [
+        18
+      ],
+      "popularity": 1.341,
+      "release_date": "2002-09-23",
+      "video": false,
+      "vote_average": 0.0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "id": 887637,
+      "title": "Bob",
+      "original_language": "en",
+      "original_title": "Bob",
+      "overview": "Asymmetric resource allocation.",
+      "poster_path": null,
+      "media_type": "movie",
+      "genre_ids": [
+        18
+      ],
+      "popularity": 0.849,
+      "release_date": "1999-01-01",
+      "video": false,
+      "vote_average": 0.0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/6zJOdiD6L0T0KARpsB0lpJGoVTk.jpg",
+      "id": 390984,
+      "title": "Bob",
+      "original_language": "en",
+      "original_title": "Bob",
+      "overview": "Who says a hamster can't travel the world chasing down his lady-love?",
+      "poster_path": "/n4wXFNGVKHPnqkFWNXWm7ZkDhsb.jpg",
+      "media_type": "movie",
+      "genre_ids": [
+        16
+      ],
+      "popularity": 0.6,
+      "release_date": "2009-11-17",
+      "video": false,
+      "vote_average": 6.5,
+      "vote_count": 10
+    },
+    {
+      "adult": false,
+      "id": 1344154,
+      "name": "Bob",
+      "original_name": "Bob",
+      "media_type": "person",
+      "popularity": 0.6,
+      "gender": 0,
+      "known_for_department": "Acting",
+      "profile_path": null,
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": null,
+          "id": 282910,
+          "title": "Into Madness",
+          "original_language": "en",
+          "original_title": "Into Madness",
+          "overview": "Initially airing on HBO's \"America Undercover\" series, this riveting documentary focuses on three families shattered by the psychiatric disorder of schizophrenia.  Subjects \"Bob,\" \"Missy\" and \"Steven\" have lived for over a decade with schizophrenia.  The film documents the difficult day-to-day existence of both those afflicted with this order and the families searching for answers to their loved ones' suffering.  This film also shows the varied and variably successful treatment methods for each of the subjects—one is placed in a group home, one is placed in an institution, and one is cared for at home. The documentary was critically acclaimed for its compassionate treatment of mental illness.",
+          "poster_path": null,
+          "media_type": "movie",
+          "genre_ids": [
+            99
+          ],
+          "popularity": 0.6,
+          "release_date": "1989-07-06",
+          "video": false,
+          "vote_average": 0.0,
+          "vote_count": 0
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "id": 2365941,
+      "name": "Bob",
+      "original_name": "Bob",
+      "media_type": "person",
+      "popularity": 0.6,
+      "gender": 0,
+      "known_for_department": "Acting",
+      "profile_path": null,
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": null,
+          "id": 183108,
+          "title": "Ecstasy in Entropy",
+          "original_language": "en",
+          "original_title": "Ecstasy in Entropy",
+          "overview": "An agit-prop edutainment ho down featuring a bevy of warrior lapdancers struggling to overthrow corporate state capitalism and rancid criminal globalisation through amateur wrestling, gun juggling and anarchist debate.",
+          "poster_path": null,
+          "media_type": "movie",
+          "genre_ids": [
+            18
+          ],
+          "popularity": 0.988,
+          "release_date": "1999-01-01",
+          "video": false,
+          "vote_average": 3.7,
+          "vote_count": 3
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/1oo3JdIXYb5z3XQK27JW8OqLA8O.jpg",
+      "id": 661790,
+      "title": "BOB",
+      "original_language": "de",
+      "original_title": "BOB",
+      "overview": "A painter in a creative crisis gets help from a monster behind a door in her studio.",
+      "poster_path": "/5scdZnjcl20vAhm1uy0Zk1wClil.jpg",
+      "media_type": "movie",
+      "genre_ids": [
+        9648,
+        18,
+        27
+      ],
+      "popularity": 0.6,
+      "release_date": "2020-09-13",
+      "video": false,
+      "vote_average": 0.0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "id": 791479,
+      "title": "Bob",
+      "original_language": "en",
+      "original_title": "Bob",
+      "overview": "A gay couple moves in together and finds out they have to share the apartment with a ghost named Bob.",
+      "poster_path": "/mlKUG2a8ZKfM9TWWS8zlRcHqv4q.jpg",
+      "media_type": "movie",
+      "genre_ids": [],
+      "popularity": 0.6,
+      "release_date": "2017-07-19",
+      "video": false,
+      "vote_average": 1.0,
+      "vote_count": 1
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "id": 937446,
+      "title": "BOB",
+      "original_language": "ne",
+      "original_title": "BOB",
+      "overview": "A psychiatrist is trying to help a young schizophrenic patient win over his imagination with some rather unconventional methods.",
+      "poster_path": "/9AuL5yWU6uHgmwaxMhSHNvc16Lo.jpg",
+      "media_type": "movie",
+      "genre_ids": [
+        53
+      ],
+      "popularity": 0.6,
+      "release_date": "",
+      "video": false,
+      "vote_average": 8.0,
+      "vote_count": 1
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "id": 680167,
+      "title": "Bob",
+      "original_language": "it",
+      "original_title": "Bob",
+      "overview": "",
+      "poster_path": "/hFRQqLchApBv6iCrEYbqJ9HvK73.jpg",
+      "media_type": "movie",
+      "genre_ids": [
+        99
+      ],
+      "popularity": 0.6,
+      "release_date": "",
+      "video": false,
+      "vote_average": 0.0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "id": 544264,
+      "title": "Bob",
+      "original_language": "en",
+      "original_title": "Bob",
+      "overview": "Loosing your apartment is as easy as loosing a tooth.",
+      "poster_path": null,
+      "media_type": "movie",
+      "genre_ids": [
+        18
+      ],
+      "popularity": 0.6,
+      "release_date": "2001-06-18",
+      "video": false,
+      "vote_average": 0.0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "id": 1648562,
+      "name": "Bob",
+      "original_name": "Bob",
+      "media_type": "person",
+      "popularity": 0.6,
+      "gender": 0,
+      "known_for_department": "Acting",
+      "profile_path": null,
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": null,
+          "id": 238434,
+          "title": "Ne me quitte pas",
+          "original_language": "fr",
+          "original_title": "Ne me quitte pas",
+          "overview": "The film tells the story of two friends who want to disappear from life. While their country Belgium is falling apart, two lost souls cling to each other.",
+          "poster_path": "/bsopKr4oZxQKnaRG6OCqhn5RR8V.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            35,
+            99,
+            18
+          ],
+          "popularity": 0.6,
+          "release_date": "2013-11-23",
+          "video": false,
+          "vote_average": 5.6,
+          "vote_count": 5
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "id": 3244295,
+      "name": "Bob",
+      "original_name": "Bob",
+      "media_type": "person",
+      "popularity": 0.6,
+      "gender": 0,
+      "known_for_department": "Directing",
+      "profile_path": null,
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": null,
+          "id": 877159,
+          "title": "Fast Cars, Bad Kids",
+          "original_language": "en",
+          "original_title": "Fast Cars, Bad Kids",
+          "overview": "Jillian and Addie wanted to drive their dad's car, but their dad won't let them cause their dad said \"12 years\". When Addie stole their dad's car keys, they go to Disney Land. However, this goes wrong.",
+          "poster_path": "/2Pg3hm8c2lSeEIPgQHpysdlgG8G.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            28,
+            10751
+          ],
+          "popularity": 0.6,
+          "release_date": "2010-09-06",
+          "video": false,
+          "vote_average": 0.0,
+          "vote_count": 0
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "id": 2655044,
+      "name": "Bob",
+      "original_name": "Bob",
+      "media_type": "person",
+      "popularity": 0.6,
+      "gender": 0,
+      "known_for_department": "Acting",
+      "profile_path": null,
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": null,
+          "id": 709070,
+          "title": "Bethany",
+          "original_language": "pt",
+          "original_title": "Bethany",
+          "overview": "",
+          "poster_path": "/2AKId9RkBWfBQqWJOY8oJxQyEzP.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            9648,
+            35
+          ],
+          "popularity": 0.605,
+          "release_date": "2019-11-08",
+          "video": false,
+          "vote_average": 0.0,
+          "vote_count": 0
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "id": 3574870,
+      "name": "Bob",
+      "original_name": "Bob",
+      "media_type": "person",
+      "popularity": 0.6,
+      "gender": 0,
+      "known_for_department": "Acting",
+      "profile_path": null,
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": null,
+          "id": 983558,
+          "title": "Bob Samu Megafilm!",
+          "original_language": "hu",
+          "original_title": "Bob Samu Megafilm!",
+          "overview": "",
+          "poster_path": null,
+          "media_type": "movie",
+          "genre_ids": [],
+          "popularity": 0.6,
+          "release_date": "2018-06-04",
+          "video": false,
+          "vote_average": 0.0,
+          "vote_count": 0
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "id": 2975843,
+      "name": "Bob",
+      "original_name": "Bob",
+      "media_type": "person",
+      "popularity": 0.6,
+      "gender": 0,
+      "known_for_department": "Acting",
+      "profile_path": "/r7VKlwgeaocpBoAcst3Y2lfXPOf.jpg",
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": "/8qIqAJ9BgI2dEDZ1CMh0E8pwXCV.jpg",
+          "id": 796456,
+          "title": "Abandoned Detroit - The City of Neglect",
+          "original_language": "en",
+          "original_title": "Abandoned Detroit - The City of Neglect",
+          "overview": "Follows Bob, also known as Detroit Unseen, into past and present icons of Detroit, including the Grande Ballroom, the Book Tower, Michigan Central Station, Herman Kiefer hospital, the former Cass Technical High School and even the Cantrell Funeral Home — where the unattended remains of dozens of bodies were found The thrill-seeker and history buff is the subject of an hour-long documentary that's said to represent a 13-year exploration of the city's iconic and idling structures, many of which have since been restored or demolished.",
+          "poster_path": null,
+          "media_type": "movie",
+          "genre_ids": [
+            99
+          ],
+          "popularity": 0.616,
+          "release_date": "2021-01-30",
+          "video": false,
+          "vote_average": 0.0,
+          "vote_count": 0
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "id": 3534295,
+      "name": "Bob",
+      "original_name": "Bob",
+      "media_type": "person",
+      "popularity": 0.6,
+      "gender": 0,
+      "known_for_department": "Visual Effects",
+      "profile_path": null,
+      "known_for": []
+    },
+    {
+      "adult": false,
+      "id": 3678971,
+      "name": "Bob",
+      "original_name": "Bob",
+      "media_type": "person",
+      "popularity": 0.6,
+      "gender": 0,
+      "known_for_department": "Acting",
+      "profile_path": null,
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": null,
+          "id": 1017639,
+          "title": "The Wild Panda",
+          "original_language": "en",
+          "original_title": "The Wild Panda",
+          "overview": "7 years after the events of Wild Panda 6, Ethan and Cam return to stop the Panda once and for all.",
+          "poster_path": "/wRpHIgeH8rXFrMImpz4N0KwC4xR.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            18,
+            28,
+            35
+          ],
+          "popularity": 0.6,
+          "release_date": "2022-08-26",
+          "video": false,
+          "vote_average": 0.0,
+          "vote_count": 0
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "id": 3042996,
+      "name": "Bob",
+      "original_name": "Bob",
+      "media_type": "person",
+      "popularity": 0.6,
+      "gender": 0,
+      "known_for_department": "Acting",
+      "profile_path": null,
+      "known_for": [
+        {
+          "adult": false,
+          "backdrop_path": null,
+          "id": 816011,
+          "title": "B. O. B.",
+          "original_language": "en",
+          "original_title": "B. O. B.",
+          "overview": "Most people live a normal and routine day, repeating the same healthy personal tasks and goals each day, but what if part of your routine is sick of being used day by day by day by day B. O. B.",
+          "poster_path": "/AmBRglYHvZzTyxeFST7N3D2zTaP.jpg",
+          "media_type": "movie",
+          "genre_ids": [
+            53
+          ],
+          "popularity": 0.6,
+          "release_date": "2021-04-06",
+          "video": false,
+          "vote_average": 10.0,
+          "vote_count": 1
+        }
+      ]
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/6LLRTLGsb4HZaOI2LX3EsxQResH.jpg",
+      "id": 32726,
+      "name": "Bob's Burgers",
+      "original_language": "en",
+      "original_name": "Bob's Burgers",
+      "overview": "Bob's Burgers follows a third-generation restaurateur, Bob, as he runs Bob's Burgers with the help of his wife and their three kids. Bob and his quirky family have big ideas about burgers, but fall short on service and sophistication. Despite the greasy counters, lousy location and a dearth of customers, Bob and his family are determined to make Bob's Burgers \"grand re-re-re-opening\" a success.",
+      "poster_path": "/4Mey4NYqXH0LlDO06ebevkDleTo.jpg",
+      "media_type": "tv",
+      "genre_ids": [
+        35,
+        16
+      ],
+      "popularity": 104.228,
+      "first_air_date": "2011-01-09",
+      "vote_average": 7.866,
+      "vote_count": 737,
+      "origin_country": [
+        "US"
+      ]
+    }
+  ],
+  "total_pages": 408,
+  "total_results": 8145
+}
