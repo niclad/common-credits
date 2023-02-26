@@ -16,7 +16,7 @@
   };
 </script>
 
-<h1 class="title-logo text-center">Common Credits</h1>
+<h1 class="title-logo text-center mt-3">Common Credits</h1>
 
 <SearchBar bind:mediaData />
 
