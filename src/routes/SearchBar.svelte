@@ -23,7 +23,7 @@
 	let searchResults: any[] = [];
 	let numResults: number = 0;
 	let selectedResults: any[] = [];
-	
+
 	function updateHasResults() {
 		if (searchValue?.trim()) hasResults = true;
 		else hasResults = false;
@@ -244,31 +244,32 @@
 </script>
 
 <!-- Search bar and button -->
-<div class="input-group" class:mb-3={!hasResults}>
-	<input
-		type="text"
-		class="form-control"
-		placeholder="Search for a title..."
-		aria-label="Movie or TV show title"
-		aria-describedby="search-button"
-		class:rounded-0={hasResults}
-		class:custom-rounded-input={hasResults}
-		bind:value={searchValue}
-		on:keyup={(event) => {
-			const disallowedKeys = ['Tab', 'Backspace'];
-			if (!disallowedKeys.includes(event.key) && false) search();
-		}}
-	/>
-	<button
-		class="btn btn-success"
-		type="button"
-		id="search-button"
-		class:rounded-0={hasResults}
-		class:custom-rounded-btn={hasResults}
-		disabled={!searchValue}
-		on:click={search}><i class="bi bi-search" /></button
-	>
-</div>
+<form on:submit|preventDefault={search}>
+	<div class="input-group" class:mb-3={!hasResults}>
+		<input
+			type="text"
+			class="form-control"
+			placeholder="Search for a title..."
+			aria-label="Movie or TV show title"
+			aria-describedby="search-button"
+			class:rounded-0={hasResults}
+			class:custom-rounded-input={hasResults}
+			bind:value={searchValue}
+			on:keyup={(event) => {
+				const disallowedKeys = ['Tab', 'Backspace'];
+				if (!disallowedKeys.includes(event.key) && false) search();
+			}}
+		/>
+		<button
+			class="btn btn-success"
+			type="submit"
+			id="search-button"
+			class:rounded-0={hasResults}
+			class:custom-rounded-btn={hasResults}
+			disabled={!searchValue}><i class="bi bi-search" /></button
+		>
+	</div>
+</form>
 
 <!-- Search results list -->
 {#if hasResults && searchResults.length > 0}
@@ -304,16 +305,12 @@
 		{/if}
 	</div>
 {:else if hasResults && searchResults.length === 0}
-<div class="list-group mb-3 rounded-0" class:rounded-bottom={hasResults} transition:slide>
-	<span
-				class="list-group-item list-group-item-warning user-select-none"
-			>
-			<i class="bi bi-exclamation-circle-fill"></i>
-				<span
-					> No results for your current query. Double check what you entered and try again.</span
-				>
-			</span>
-</div>
+	<div class="list-group mb-3 rounded-0" class:rounded-bottom={hasResults} transition:slide>
+		<span class="list-group-item list-group-item-warning user-select-none">
+			<i class="bi bi-exclamation-circle-fill" />
+			<span> No results for your current query. Double check what you entered and try again.</span>
+		</span>
+	</div>
 {/if}
 
 <!-- Selected results list -->
