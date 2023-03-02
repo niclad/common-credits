@@ -3,6 +3,7 @@
 	import { instanceOfTv } from '$lib/media.lib';
 	import { BASE_IMG_URL, BASE_TMDB_URL, SMALL_TMDB_LOGO_URL } from '$lib/tmdb.config';
 	import { fade } from 'svelte/transition';
+	import { selectedTitle } from '$lib/stores';
 
 	export let titleOrder: number = 0;
 	export let title: BasicMedia = {
@@ -13,6 +14,7 @@
 		releaseDate: '2022-12-07',
 		voteAverage: 9.91234
 	};
+	$: clickedTitle = $selectedTitle;
 
 	// Format the year if the title is a TV show
 	$: releaseDate = formatDate(title);
@@ -47,7 +49,7 @@
 	$: imgUrl = title.posterPath ? BASE_IMG_URL + title.posterPath : placeholderImgUrl;
 </script>
 
-<div class="card" transition:fade>
+<div class="card" class:highlight={(titleOrder + 1).toString() === clickedTitle} transition:fade>
 	<img src={imgUrl} class="card-img-top" alt="title card" />
 	<div class="card-body">
 		<h5 class="card-title">
@@ -94,5 +96,9 @@
 
 	a:hover {
 		font-weight: bold;
+	}
+
+	.highlight {
+		box-shadow: 0 0 0 0.25rem rgba(14, 239, 255, 0.5);
 	}
 </style>

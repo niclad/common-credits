@@ -4,6 +4,7 @@
 	import { BASE_IMG_URL, BASE_TMDB_URL, SMALL_TMDB_LOGO_URL } from '$lib/tmdb.config';
 	import { fade } from 'svelte/transition';
 	import headShot from '$lib/assets/user.svg';
+	import { selectedTitle } from '$lib/stores';
 
 	let infoOpen: boolean = false;
 
@@ -79,6 +80,20 @@
 
 		return jobs;
 	}
+
+	$: clickedTitle = $selectedTitle;
+
+	function setSelectedTitle(key: string) {
+		if (!clickedTitle) {
+			clickedTitle = titleOrder[key];
+		} else if (clickedTitle && clickedTitle !== titleOrder[key]) {
+			clickedTitle = titleOrder[key];
+		} else {
+			clickedTitle = '';
+		}
+
+		selectedTitle.set(clickedTitle);
+	}
 </script>
 
 <div class="card" transition:fade>
@@ -123,10 +138,13 @@
 				>
 					<div class="accordion-body person-roles">
 						<table class="table table-hover table-sm">
-							<tbody>
+							<tbody class="user-select-none">
 								{#if instanceOfMediaCast(person)}
 									{#each Object.entries(person.characters) as [key, value]}
-										<tr>
+										<tr
+											class:row-active={clickedTitle === titleOrder[key]}
+											on:click={() => setSelectedTitle(key)}
+										>
 											<td class="title-num">{titleOrder[key]}</td>
 											<td>{value}</td>
 										</tr>
@@ -177,5 +195,10 @@
 
 	.title-num {
 		font-weight: bold;
+	}
+
+	.row-active {
+		background-color: #032830;
+		color: #6edff6;
 	}
 </style>
