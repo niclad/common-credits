@@ -85,19 +85,19 @@
 
 	function setSelectedTitle(key: string) {
 		if (!clickedTitle) {
-			clickedTitle = titleOrder[key];
+			clickedTitle = titleOrder[key] ?? key;
 		} else if (clickedTitle && clickedTitle !== titleOrder[key]) {
 			clickedTitle = titleOrder[key];
 		} else {
 			clickedTitle = '';
 		}
 
-		selectedTitle.set(clickedTitle);
+		selectedTitle.set(clickedTitle.toLowerCase());
 	}
 </script>
 
 <div class="card" transition:fade>
-	<img src={imageUrl} class="card-img-top" class:noimg={noHeadShot} alt="title card" />
+	<img src={imageUrl} class="card-img-top border-bottom" class:noimg={noHeadShot} alt="title card" />
 	<div class="card-body">
 		<div class="row row-cols-2">
 			<div class="col-md-auto">
@@ -151,7 +151,10 @@
 									{/each}
 								{:else}
 									{#each Object.entries(mergeSameJobs(person)) as [key, value]}
-										<tr>
+										<tr
+											class:row-active={clickedTitle === titleOrder[key] || clickedTitle === 'all'}
+											on:click={() => setSelectedTitle(key)}
+										>
 											{#if key.toLowerCase() === 'all'}
 												<td class="title-num user-select-none">All</td>
 											{:else}

@@ -49,8 +49,8 @@
 	$: imgUrl = title.posterPath ? BASE_IMG_URL + title.posterPath : placeholderImgUrl;
 </script>
 
-<div class="card" class:highlight={(titleOrder + 1).toString() === clickedTitle} transition:fade>
-	<img src={imgUrl} class="card-img-top" alt="title card" />
+<div class="card" class:highlight={((titleOrder + 1).toString() === clickedTitle) || (clickedTitle === 'all')} transition:fade>
+	<img src={imgUrl} class="card-img-top border-bottom" alt="title card" />
 	<div class="card-body">
 		<h5 class="card-title">
 			<a href={titleLink} class="stretched-link-off" target="_blank" rel="noopener noreferrer"
