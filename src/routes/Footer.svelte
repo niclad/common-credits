@@ -23,7 +23,7 @@
   <div class="container-xl d-flex flex-wrap justify-content-between align-items-center">
     <p class="col-md-4 mb-0 text-begin" />
     <a
-      class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto text-decoration-none bottom-logo title-logo"
+      class="col-md-4 d-none d-md-block d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto text-decoration-none bottom-logo title-logo"
       href="/">Common Credits</a
     >
     <ul class="nav col-md-4 justify-content-end">
