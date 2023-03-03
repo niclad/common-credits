@@ -33,7 +33,7 @@
 		aria-labelledby="panel-{accordionId}"
 	>
 		<div class="accordion-body">
-			<div class="row row-cols-6 g-2">
+			<div class="row row-cols-lg-6 row-cols-md-4 row-cols-sm-3 row-cols-2 g-2">
 				{#each data as mediaItem, i}
 					<div class="col">
 						<div class="p-2">

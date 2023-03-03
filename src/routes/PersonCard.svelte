@@ -3,7 +3,7 @@
 	import { instanceOfMediaCast } from '$lib/media.lib';
 	import { BASE_IMG_URL, BASE_TMDB_URL, SMALL_TMDB_LOGO_URL } from '$lib/tmdb.config';
 	import { fade } from 'svelte/transition';
-	import headShot from '$lib/assets/user.svg';
+	import headShot from '$lib/assets/no-image-prof.webp';
 	import { selectedTitle } from '$lib/stores';
 
 	let infoOpen: boolean = false;
@@ -83,6 +83,10 @@
 
 	$: clickedTitle = $selectedTitle;
 
+	/**
+	 * Sets the selected title to hightlight based on the title's key
+	 * @param key The title's key
+	 */
 	function setSelectedTitle(key: string) {
 		if (!clickedTitle) {
 			clickedTitle = titleOrder[key] ?? key;
@@ -97,17 +101,18 @@
 </script>
 
 <div class="card" transition:fade>
-	<img src={imageUrl} class="card-img-top border-bottom" class:noimg={noHeadShot} alt="title card" />
+	<img
+		src={imageUrl}
+		class="card-img-top border-bottom"
+		class:noimg={noHeadShot}
+		alt="title card"
+	/>
 	<div class="card-body">
-		<div class="row row-cols-2">
-			<div class="col-md-auto">
-				<h5 class="card-title">
-					<a href={personLink} class="stretched-link-off" target="_blank" rel="noopener noreferrer"
-						>{person.name}</a
-					>
-				</h5>
-			</div>
-		</div>
+		<h5 class="card-title">
+			<a href={personLink} class="stretched-link-off" target="_blank" rel="noopener noreferrer"
+				>{person.name}</a
+			>
+		</h5>
 	</div>
 	<div class="card-footer">
 		<div class="accordion accordion-flush" id="accordion-{person.id}-{person.type}">
@@ -181,11 +186,6 @@
 
 	a:hover {
 		font-weight: bold;
-	}
-
-	.noimg {
-		background-color: lightgrey;
-		height: calc(1.5 * 186px);
 	}
 
 	.card-footer {
